@@ -1,7 +1,9 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session, redirect  
 from database import init_db , get_db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+app.secret_key = "examguard-security-key" 
 init_db()
 
 @app.route("/")
@@ -31,6 +33,8 @@ def register():
         name = request.form["name"]
         email = request.form["email"]
         password = request.form["password"]
+        hashed_password = generate_password_hash(password)
+        print(f"{name},Emai; : {email},Password :{hashed_password}")
 
         connection = get_db()
         connection.execute(
@@ -45,7 +49,8 @@ def register():
         connection.commit()
         connection.close()
         
-        return "registration successful"
+        #return "registration successful"
+        return redirect("/login")
 
         print("name:", name)
         print("email:", email)
@@ -67,18 +72,38 @@ def login():
             """
             SELECT *
             FROM candidates
-            WHERE email = ? AND password = ?
+            WHERE email = ? 
             """,
-            (email, password)
+            (email,)
         ).fetchone()
 
         connection.close()
 
-        if candidate:
-            return "Login successful!"
-
+        if candidate and check_password_hash(candidate["password"],password):
+           # return "Login successful!"
+           session["candidate_id"]= candidate["id"]
+           #return "Login successful!"
+           #return render_template("dashboard.html")
+           return redirect("/dashboard")
+        
         return "Invalid email or password"
 
     return render_template("login.html")
+
+@app.route("/dashboard")
+def dashboard():
+    if "candidate id" not in session:
+        return "please login first"
+
+
+    return render_template("dashboard.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return "logout successful"
+
+
 if __name__ == "__main__":
+    init_db()
     app.run(debug=True)
