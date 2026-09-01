@@ -1,18 +1,80 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <title>ExamGuard Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eef4f1, #dce8e2);
+            color: #24352d;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dashboard-box {
+            width: 500px;
+            padding: 50px 40px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(41, 72, 58, 0.15);
+            border: 1px solid #d5e0d9;
+        }
+
+        h1 {
+            margin: 0 0 15px;
+            color: #29483a;
+            font-size: 32px;
+            letter-spacing: 1px;
+        }
+
+        p {
+            color: #68796f;
+            font-size: 17px;
+            margin-bottom: 30px;
+        }
+
+        a {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #527765, #385b4a);
+            color: white;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: bold;
+            box-shadow: 0 6px 15px rgba(56, 91, 74, 0.2);
+            transition: 0.3s;
+        }
+
+        a:hover {
+            background: linear-gradient(135deg, #385b4a, #29483a);
+            transform: translateY(-2px);
+            box-shadow: 0 9px 20px rgba(56, 91, 74, 0.25);
+        }
+    </style>
+
 </head>
 
 <body>
 
-    <h1>Candidate Dashboard</h1>
+    <div class="dashboard-box">
 
-    <p>Welcome to ExamGuard!</p>
+        <h1>Candidate Dashboard</h1>
 
-    <a href="/logout">Logout</a>
+        <p>Welcome to ExamGuard!</p>
+
+        <a href="/logout">Logout</a>
+
+    </div>
 
 </body>
 
 </html>
+

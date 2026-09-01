@@ -1,32 +1,136 @@
+
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>ExamGuard Registration</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eef4f1, #dce8e2);
+            color: #24352d;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 50px;
+            margin-bottom: 25px;
+            color: #29483a;
+            font-size: 32px;
+            letter-spacing: 1px;
+        }
+
+        form {
+            width: 350px;
+            margin: 0 auto 40px;
+            padding: 35px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(41, 72, 58, 0.15);
+            text-align: left;
+        }
+
+        label {
+            color: #385447;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #c5d2ca;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            background: #f8faf9;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #668b78;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 139, 120, 0.12);
+        }
+
+        input[type="file"] {
+            padding: 9px;
+            background: #f4f7f5;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #527765, #385b4a);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(56, 91, 74, 0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #385b4a, #29483a);
+            transform: translateY(-2px);
+        }
+    </style>
+
 </head>
+
 <body>
 
     <h1>Candidate Registration</h1>
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
 
         <label>Name</label>
-        <input type="text" name="name">
+
+        <input 
+            type="text" 
+            name="name"
+        >
 
         <br><br>
 
         <label>Email</label>
-        <input type="email" name="email">
+
+        <input 
+            type="email" 
+            name="email"
+        >
 
         <br><br>
 
         <label>Password</label>
-        <input type="password" name="password">
+
+        <input 
+            type="password" 
+            name="password"
+        >
 
         <br><br>
 
-        <button type="submit">Register</button>
+        <label>Photo</label>
+
+        <input type="file" name="photo" accept="image/*" required>
+
+        <br><br>
+
+        <button type="submit">
+            Register
+        </button>
 
     </form>
 
 </body>
+
 </html>
+

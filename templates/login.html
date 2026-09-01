@@ -1,8 +1,87 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <title>ExamGuard Login</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eef4f1, #d9e7df);
+            color: #24352d;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0 0 25px;
+            color: #29483a;
+            font-size: 32px;
+            letter-spacing: 1px;
+        }
+
+        form {
+            width: 350px;
+            padding: 38px;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 18px;
+            box-shadow: 0 15px 40px rgba(41, 72, 58, 0.15);
+            text-align: left;
+            border: 1px solid #d5e0d9;
+        }
+
+        label {
+            color: #385447;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #c5d2ca;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            background: #f8faf9;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #668b78;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(102, 139, 120, 0.12);
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #527765, #385b4a);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 6px 15px rgba(56, 91, 74, 0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #385b4a, #29483a);
+            transform: translateY(-2px);
+            box-shadow: 0 9px 20px rgba(56, 91, 74, 0.25);
+        }
+    </style>
+
 </head>
 
 <body>
@@ -13,9 +92,9 @@
 
         <label>Email:</label>
 
-        <input
-            type="email"
-            name="email"
+        <input 
+            type="email" 
+            name="email" 
             required
         >
 
@@ -23,9 +102,9 @@
 
         <label>Password:</label>
 
-        <input
-            type="password"
-            name="password"
+        <input 
+            type="password" 
+            name="password" 
             required
         >
 
@@ -40,3 +119,4 @@
 </body>
 
 </html>
+
