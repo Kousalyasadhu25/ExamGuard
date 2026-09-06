@@ -1,136 +1,477 @@
-
 <!DOCTYPE html>
+
 <html>
 
 <head>
-    <title>ExamGuard Registration</title>
+
+    <title>Candidate Registration</title>
+
 
     <style>
+
         body {
-            margin: 0;
+
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #eef4f1, #dce8e2);
-            color: #24352d;
-            text-align: center;
+
+            margin: 40px;
+
         }
 
-        h1 {
-            margin-top: 50px;
-            margin-bottom: 25px;
-            color: #29483a;
-            font-size: 32px;
-            letter-spacing: 1px;
+
+        .form-container {
+
+            width: 500px;
+
+            margin: auto;
+
         }
 
-        form {
-            width: 350px;
-            margin: 0 auto 40px;
-            padding: 35px;
-            background: rgba(255, 255, 255, 0.95);
-            border: none;
-            border-radius: 18px;
-            box-shadow: 0 12px 35px rgba(41, 72, 58, 0.15);
-            text-align: left;
-        }
-
-        label {
-            color: #385447;
-            font-weight: bold;
-            font-size: 14px;
-        }
 
         input {
+
             width: 100%;
-            padding: 12px;
-            margin-top: 8px;
-            border: 1px solid #c5d2ca;
-            border-radius: 8px;
+
+            padding: 10px;
+
+            margin-top: 5px;
+
             box-sizing: border-box;
-            outline: none;
-            background: #f8faf9;
-            font-size: 14px;
-            transition: 0.3s;
+
         }
 
-        input:focus {
-            border-color: #668b78;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 139, 120, 0.12);
-        }
-
-        input[type="file"] {
-            padding: 9px;
-            background: #f4f7f5;
-        }
 
         button {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 9px;
-            background: linear-gradient(135deg, #527765, #385b4a);
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
+
+            padding: 10px 20px;
+
+            margin: 10px 5px 10px 0;
+
             cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(56, 91, 74, 0.2);
+
         }
 
-        button:hover {
-            background: linear-gradient(135deg, #385b4a, #29483a);
-            transform: translateY(-2px);
+
+        video {
+
+            width: 400px;
+
+            height: 300px;
+
+            border: 2px solid black;
+
+            display: block;
+
+            margin-top: 10px;
+
         }
+
+
+        #preview {
+
+            width: 400px;
+
+            border: 2px solid green;
+
+            margin-top: 10px;
+
+            display: none;
+
+        }
+
+
+        #canvas {
+
+            display: none;
+
+        }
+
+
+        #photoStatus {
+
+            font-weight: bold;
+
+        }
+
     </style>
 
 </head>
 
+
 <body>
 
-    <h1>Candidate Registration</h1>
 
-    <form method="POST" enctype="multipart/form-data">
+<div class="form-container">
+
+
+    <h2>Candidate Registration</h2>
+
+
+    <form method="POST" id="registerForm">
+
+
+        <!-- NAME -->
 
         <label>Name</label>
 
-        <input 
-            type="text" 
+        <input
+            type="text"
             name="name"
+            required
         >
 
-        <br><br>
+
+        <br>
+
+
+        <!-- EMAIL -->
 
         <label>Email</label>
 
-        <input 
-            type="email" 
+        <input
+            type="email"
             name="email"
+            required
         >
 
-        <br><br>
+
+        <br>
+
+
+        <!-- PASSWORD -->
 
         <label>Password</label>
 
-        <input 
-            type="password" 
+        <input
+            type="password"
             name="password"
+            required
         >
 
-        <br><br>
-
-        <label>Photo</label>
-
-        <input type="file" name="photo" accept="image/*" required>
 
         <br><br>
 
-        <button type="submit">
-            Register
+
+        <!-- CAMERA -->
+
+        <h3>Candidate Photo</h3>
+
+
+        <video
+            id="camera"
+            autoplay
+            playsinline
+        ></video>
+
+
+        <br>
+
+
+        <!-- START CAMERA -->
+
+        <button
+            type="button"
+            id="startCamera"
+        >
+
+            Start Camera
+
         </button>
 
+
+        <!-- CAPTURE PHOTO -->
+
+        <button
+            type="button"
+            id="capturePhoto"
+            disabled
+        >
+
+            Capture Photo
+
+        </button>
+
+
+        <!-- CANVAS -->
+
+        <canvas id="canvas"></canvas>
+
+
+        <!-- PHOTO PREVIEW -->
+
+        <img
+            id="preview"
+            alt="Captured Photo"
+        >
+
+
+        <p id="photoStatus"></p>
+
+
+        <br>
+
+
+        <!-- REGISTER -->
+
+        <button
+            type="submit"
+            id="registerButton"
+            disabled
+        >
+
+            Register
+
+        </button>
+
+
     </form>
+
+
+</div>
+
+
+<script>
+
+
+    // ----------------------------------------
+    // Get HTML elements
+    // ----------------------------------------
+
+    const video =
+        document.getElementById("camera");
+
+
+    const canvas =
+        document.getElementById("canvas");
+
+
+    const preview =
+        document.getElementById("preview");
+
+
+    const startCameraButton =
+        document.getElementById("startCamera");
+
+
+    const captureButton =
+        document.getElementById("capturePhoto");
+
+
+    const registerButton =
+        document.getElementById("registerButton");
+
+
+    const photoStatus =
+        document.getElementById("photoStatus");
+
+
+    // Store camera stream
+
+    let cameraStream = null;
+
+
+
+    // ----------------------------------------
+    // START CAMERA
+    // ----------------------------------------
+
+    startCameraButton.addEventListener(
+        "click",
+        async function () {
+
+            try {
+
+                // Ask browser for camera permission
+
+                cameraStream =
+                    await navigator.mediaDevices.getUserMedia({
+
+                        video: true
+
+                    });
+
+
+                // Show camera inside video element
+
+                video.srcObject =
+                    cameraStream;
+
+
+                // Enable capture button
+
+                captureButton.disabled =
+                    false
+                photoStatus.textContent =
+                    "Camera started. Position your face and click Capture Photo.";
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+
+                photoStatus.textContent =
+                    "Unable to access camera. Please allow camera permission.";
+
+            }
+
+        }
+    );
+
+
+
+    // ----------------------------------------
+    // CAPTURE PHOTO
+    // ----------------------------------------
+
+    captureButton.addEventListener(
+        "click",
+        function () {
+
+
+            // Set canvas size same as camera
+
+            canvas.width =
+                video.videoWidth;
+
+
+            canvas.height =
+                video.videoHeight;
+
+
+            // Get canvas drawing context
+
+            const context =
+                canvas.getContext("2d");
+
+
+            // Copy video frame to canvas
+
+            context.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+
+            // Display captured image
+
+            const imageData =
+                canvas.toDataURL("image/jpeg");
+
+
+            preview.src =
+                imageData;
+
+
+            preview.style.display =
+                "block";
+
+
+            photoStatus.textContent =
+                "Photo captured. Saving...";
+
+
+
+            // Convert canvas image
+            // into Blob
+
+            canvas.toBlob(
+                async function (blob) {
+
+
+                    // Create form data
+
+                    const formData =
+                        new FormData();
+
+
+                    // Add photo
+
+                    formData.append(
+                        "photo",
+                        blob,
+                        "candidate.jpg"
+                    );
+
+
+
+                    // Send photo to Flask
+
+                    const response =
+                        await fetch(
+                            "/capture-photo",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+
+
+                    // Convert response to JSON
+
+                    const result =
+                        await response.json();
+
+
+
+                    // Check result
+
+                    if (result.success) {
+
+
+                        photoStatus.textContent =
+                            "Photo captured successfully!";
+
+
+                        // Enable Register button
+
+                        registerButton.disabled =
+                            false;
+
+
+
+                        // Stop camera
+
+                        if (cameraStream) {
+
+                            cameraStream
+                                .getTracks()
+                                .forEach(
+                                    function(track) {
+
+                                        track.stop();
+
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                    else {
+
+
+                        photoStatus.textContent =
+                            "Photo capture failed.";
+
+                    }
+
+
+                },
+                "image/jpeg"
+            );
+
+        }
+    );
+
+
+</script>
+
 
 </body>
 
 </html>
-
