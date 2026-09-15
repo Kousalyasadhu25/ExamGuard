@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html>
@@ -9,14 +10,45 @@
 
     <style>
 
+        /* ============================
+           PAGE
+        ============================ */
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
 
             font-family: Arial, sans-serif;
 
-            margin: 40px;
+            margin: 0;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 30px 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef2ff,
+                    #f8fafc
+                );
+
+            color: #1e293b;
 
         }
 
+
+        /* ============================
+           FORM CONTAINER
+        ============================ */
 
         .form-container {
 
@@ -24,60 +56,269 @@
 
             margin: auto;
 
+            padding: 35px;
+
+            background: #ffffff;
+
+            border-radius: 18px;
+
+            border: 1px solid #e2e8f0;
+
+            box-shadow:
+                0 15px 40px rgba(15, 23, 42, 0.10);
+
         }
 
+
+        /* ============================
+           HEADING
+        ============================ */
+
+        h2 {
+
+            margin-top: 0;
+
+            margin-bottom: 28px;
+
+            text-align: center;
+
+            font-size: 28px;
+
+            font-weight: 700;
+
+            color: #172554;
+
+        }
+
+
+        h3 {
+
+            margin-top: 24px;
+
+            margin-bottom: 12px;
+
+            font-size: 17px;
+
+            color: #334155;
+
+        }
+
+
+        /* ============================
+           LABEL
+        ============================ */
+
+        label {
+
+            display: block;
+
+            margin-bottom: 6px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            color: #475569;
+
+        }
+
+
+        /* ============================
+           INPUT
+        ============================ */
 
         input {
 
             width: 100%;
 
-            padding: 10px;
+            padding: 12px 14px;
 
             margin-top: 5px;
 
-            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+
+            border-radius: 8px;
+
+            background: #f8fafc;
+
+            font-size: 15px;
+
+            color: #1e293b;
+
+            outline: none;
+
+            transition: 0.2s ease;
 
         }
 
 
-        button {
+        input:focus {
 
-            padding: 10px 20px;
+            background: #ffffff;
 
-            margin: 10px 5px 10px 0;
+            border-color: #4f46e5;
 
-            cursor: pointer;
+            box-shadow:
+                0 0 0 3px rgba(79, 70, 229, 0.10);
 
         }
 
+
+        /* ============================
+           CAMERA
+        ============================ */
 
         video {
 
             width: 400px;
 
+            max-width: 100%;
+
             height: 300px;
 
-            border: 2px solid black;
+            border: 2px solid #cbd5e1;
+
+            border-radius: 12px;
 
             display: block;
 
             margin-top: 10px;
 
+            object-fit: cover;
+
+            background: #0f172a;
+
+            box-shadow:
+                0 8px 20px rgba(15, 23, 42, 0.10);
+
         }
 
+
+        /* ============================
+           BUTTONS
+        ============================ */
+
+        button {
+
+            padding: 11px 20px;
+
+            margin: 10px 5px 10px 0;
+
+            cursor: pointer;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            color: #ffffff;
+
+            background: #4f46e5;
+
+            transition: 0.2s ease;
+
+        }
+
+
+        button:hover:not(:disabled) {
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 6px 15px rgba(79, 70, 229, 0.20);
+
+        }
+
+
+        /* ============================
+           START CAMERA
+        ============================ */
+
+        #startCamera {
+
+            background: #0f766e;
+
+        }
+
+
+        #startCamera:hover:not(:disabled) {
+
+            background: #115e59;
+
+        }
+
+
+        /* ============================
+           CAPTURE PHOTO
+        ============================ */
+
+        #capturePhoto {
+
+            background: #2563eb;
+
+        }
+
+
+        #capturePhoto:hover:not(:disabled) {
+
+            background: #1d4ed8;
+
+        }
+
+
+        /* ============================
+           DISABLED BUTTON
+        ============================ */
+
+        button:disabled {
+
+            background: #cbd5e1;
+
+            color: #64748b;
+
+            cursor: not-allowed;
+
+            box-shadow: none;
+
+            transform: none;
+
+        }
+
+
+        /* ============================
+           PHOTO PREVIEW
+        ============================ */
 
         #preview {
 
             width: 400px;
 
-            border: 2px solid green;
+            max-width: 100%;
+
+            max-height: 300px;
+
+            object-fit: cover;
+
+            border: 2px solid #22c55e;
+
+            border-radius: 12px;
 
             margin-top: 10px;
 
             display: none;
 
+            box-shadow:
+                0 8px 20px rgba(34, 197, 94, 0.12);
+
         }
 
+
+        /* ============================
+           CANVAS
+        ============================ */
 
         #canvas {
 
@@ -86,9 +327,101 @@
         }
 
 
+        /* ============================
+           STATUS
+        ============================ */
+
         #photoStatus {
 
             font-weight: bold;
+
+            font-size: 13px;
+
+            color: #64748b;
+
+            margin-top: 10px;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* ============================
+           REGISTER BUTTON
+        ============================ */
+
+        #registerButton {
+
+            width: 100%;
+
+            margin-top: 15px;
+
+            padding: 13px;
+
+            border-radius: 9px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f46e5,
+                    #2563eb
+                );
+
+            font-size: 15px;
+
+        }
+
+
+        #registerButton:hover:not(:disabled) {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4338ca,
+                    #1d4ed8
+                );
+
+            box-shadow:
+                0 8px 20px rgba(37, 99, 235, 0.22);
+
+        }
+
+
+        /* ============================
+           MOBILE
+        ============================ */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 20px 12px;
+
+                align-items: flex-start;
+
+            }
+
+            .form-container {
+
+                width: 100%;
+
+                margin-top: 20px;
+
+                padding: 25px 20px;
+
+            }
+
+            h2 {
+
+                font-size: 24px;
+
+            }
+
+            video {
+
+                height: 250px;
+
+            }
 
         }
 
@@ -475,3 +808,4 @@
 </body>
 
 </html>
+
