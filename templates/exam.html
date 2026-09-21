@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examination — ExamGuard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #172033;
+            --muted: #667085;
+            --border: #e4e7ec;
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --success: #12b76a;
+            --danger: #f04438;
+            --shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            background: #111827;
+            color: #fff;
+            min-height: 68px;
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, .12);
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: .2px;
+        }
+
+        .logo-dot {
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            border-radius: 50%;
+            background: #7c3aed;
+            margin-right: 8px;
+            box-shadow: 0 0 12px rgba(124, 58, 237, .7);
+        }
+
+        /* ================= PAGE ================= */
+
+        .page {
+            max-width: 1180px;
+            margin: 32px auto;
+            padding: 0 20px 50px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h1,
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* ================= BUTTONS ================= */
+
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(.97);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #eef2ff;
+            color: #3730a3;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        /* ================= MONITORING ================= */
+
+        .monitor-grid {
+            display: grid;
+            grid-template-columns: 330px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .monitor-card {
+            position: sticky;
+            top: 20px;
+        }
+
+        #camera {
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #0b0f19;
+            display: block;
+            margin-top: 16px;
+            border: 3px solid #e5e7eb;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        /* ================= STATUS ================= */
+
+        .status-line {
+            display: grid;
+            grid-template-columns: 10px 1fr auto;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .status-line:last-of-type {
+            border-bottom: 0;
+        }
+
+        .status-label {
+            color: var(--muted);
+        }
+
+        .status-value {
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-neutral {
+            background: #98a2b3;
+        }
+
+        .dot-good {
+            background: var(--success);
+            box-shadow: 0 0 0 4px rgba(18, 183, 106, .12);
+        }
+
+        .dot-bad {
+            background: var(--danger);
+            box-shadow: 0 0 0 4px rgba(240, 68, 56, .12);
+        }
+
+        /* ================= QUESTIONS ================= */
+
+        .questions {
+            display: grid;
+            gap: 18px;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 5px 18px rgba(16, 24, 40, .05);
+        }
+
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: #eef2ff;
+            color: var(--primary);
+            font-weight: 800;
+            margin-right: 8px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.55;
+            margin: 0 0 16px;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            color: #344054;
+            font-size: 15px;
+            transition: .2s ease;
+        }
+
+        .option:hover {
+            border-color: #a5b4fc;
+            background: #f8f8ff;
+        }
+
+        .option input {
+            accent-color: var(--primary);
+            width: 17px;
+            height: 17px;
+        }
+
+        .question-actions {
+            margin-top: 14px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* ================= ACTIVITY LOG ================= */
+
+        .console {
+            max-height: 220px;
+            overflow-y: auto;
+            background: #101828;
+            color: #d0d5dd;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .console-line {
+            padding: 6px 0;
+            font-size: 13px;
+        }
+
+        .console-line.flag {
+            color: #fda29b;
+        }
+
+        .console-line .t {
+            color: #98a2b3;
+            margin-right: 10px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 850px) {
+
+            .monitor-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .monitor-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .page {
+                margin-top: 20px;
+                padding: 0 12px 35px;
+            }
+
+            .card,
+            .question-card {
+                padding: 18px;
+            }
+
+            .navbar {
+                padding: 0 16px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <div class="navbar-brand">
+            <span class="logo-dot"></span>
+            ExamGuard
+        </div>
+
+        <div class="navbar-links">
+
+            <span id="session-badge"
+                  class="badge badge-progress">
+
+                in progress
+
+            </span>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="page">
+
+        <!-- ================= EXAM HEADER ================= -->
+
+        <div class="card" style="margin-bottom:24px;">
+
+            <h1>
+                Aptitude Examination
+            </h1>
+
+            <p class="subtitle">
+
+                {% if candidate_name %}
+                    Candidate: {{ candidate_name }} —
+                {% endif %}
+
+                Answer all 10 aptitude questions carefully.
+                Keep this tab focused and your face within the camera frame.
+
+            </p>
+
+
+            <div class="btn-row">
+
+                <button id="pauseBtn"
+                        class="btn btn-secondary">
+
+                    Pause exam
+
+                </button>
+
+
+                <button id="resumeBtn"
+                        class="btn btn-secondary"
+                        style="display:none;">
+
+                    Resume exam
+
+                </button>
+
+
+                <button id="submitBtn"
+                        class="btn btn-danger">
+
+                    Submit exam
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= MONITOR + QUESTIONS ================= -->
+
+        <div class="monitor-grid">
+
+
+            <!-- ================= MONITORING CARD ================= -->
+
+            <div class="card monitor-card">
+
+                <h3>
+                    Monitoring Status
+                </h3>
+
+
+                <!-- Camera -->
+
+                <div class="status-line">
+
+                    <span id="camera-dot"
+                          class="status-dot dot-neutral">
+                    </span>
+
+                    <span class="status-label">
+                        Camera
+                    </span>
+
+                    <span id="camera-status"
+                          class="status-value">
+
+                        Starting…
+
+                    </span>
+
+                </div>
+
+
+                <!-- Face -->
+
+                <div class="status-line">
+
+                    <span id="face-dot"
+                          class="status-dot dot-neutral">
+                    </span>
+
+                    <span class="status-label">
+                        Face presence
+                    </span>
+
+                    <span id="face-status"
+                          class="status-value">
+
+                        Waiting…
+
+                    </span>
+
+                </div>
+
+
+                <!-- Browser -->
+
+                <div class="status-line">
+
+                    <span id="browser-dot"
+                          class="status-dot dot-good">
+                    </span>
+
+                    <span class="status-label">
+                        Browser activity
+                    </span>
+
+                    <span id="browser-status"
+                          class="status-value">
+
+                        Active
+
+                    </span>
+
+                </div>
+
+
+                <video id="camera"
+                       autoplay
+                       playsinline>
+                </video>
+
+                <canvas id="canvas"></canvas>
+
+            </div>
+
+
+            <!-- ================= QUESTIONS ================= -->
+
+            <div class="questions">
+
+
+                <!-- QUESTION 1 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            1
+                        </span>
+
+                        If 20% of a number is 48,
+                        what is the number?
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+
+                            <input type="radio"
+                                   name="answer_1"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                180
+                            </span>
+
+                        </label>
+
+
+                        <label class="option">
+
+                            <input type="radio"
+                                   name="answer_1"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                220
+                            </span>
+
+                        </label>
+
+
+                        <label class="option">
+
+                            <input type="radio"
+                                   name="answer_1"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                240
+                            </span>
+
+                        </label>
+
+
+                        <label class="option">
+
+                            <input type="radio"
+                                   name="answer_1"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                260
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(1)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION 2 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            2
+                        </span>
+
+                        A train travels 360 km in 4 hours.
+                        What is its average speed?
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_2"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                80 km/h
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_2"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                90 km/h
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_2"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                100 km/h
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_2"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                120 km/h
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(2)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION 3 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            3
+                        </span>
+
+                        The ratio of boys to girls in a class
+                        is 3:2. If there are 30 boys,
+                        how many girls are there?
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_3"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                15
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_3"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                20
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_3"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                25
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_3"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                45
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(3)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION 4 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            4
+                        </span>
+
+                        A shopkeeper buys an item for ₹800
+                        and sells it for ₹920.
+                        What is the profit percentage?
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_4"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                10%
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_4"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                12%
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_4"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                15%
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_4"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                20%
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(4)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION 5 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            5
+                        </span>
+
+                        What is the simple interest on ₹5,000
+                        at 8% per annum for 2 years?
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_5"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                ₹400
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_5"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                ₹600
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_5"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                ₹800
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_5"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                ₹1,000
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(5)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION 6 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            6
+                        </span>
+
+                        A can complete a work in 12 days
+                        and B can complete it in 18 days.
+                        How many days will they take together?
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_6"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                6.5 days
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_6"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                7.2 days
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_6"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                8 days
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_6"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                9 days
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(6)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION 7 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            7
+                        </span>
+
+                        The average of 12, 18, 20, 25 and 30 is:
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_7"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                19
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_7"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                20
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_7"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                21
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_7"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                22
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(7)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION 8 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            8
+                        </span>
+
+                        If a number is increased by 25%
+                        and becomes 250,
+                        what was the original number?
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_8"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                180
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_8"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                200
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_8"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                210
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_8"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                225
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(8)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION 9 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            9
+                        </span>
+
+                        A man walks at 6 km/h.
+                        How much time will he take
+                        to cover 15 km?
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_9"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                2 hours
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_9"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                2 hours 15 minutes
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_9"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                2 hours 30 minutes
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_9"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                3 hours
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(9)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION 10 -->
+
+                <div class="question-card">
+
+                    <p class="question-text">
+
+                        <span class="question-number">
+                            10
+                        </span>
+
+                        Find the next number:
+
+                        3, 6, 12, 24, __
+
+                    </p>
+
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_10"
+                                   value="A">
+
+                            <span>
+                                <strong>A.</strong>
+                                36
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_10"
+                                   value="B">
+
+                            <span>
+                                <strong>B.</strong>
+                                42
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_10"
+                                   value="C">
+
+                            <span>
+                                <strong>C.</strong>
+                                48
+                            </span>
+                        </label>
+
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="answer_10"
+                                   value="D">
+
+                            <span>
+                                <strong>D.</strong>
+                                54
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <div class="question-actions">
+
+                        <button class="btn btn-primary"
+                                type="button"
+                                onclick="submitAnswer(10)">
+
+                            Save answer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= ACTIVITY LOG ================= -->
+
+        <div class="card" style="margin-top:24px;">
+
+            <h3>
+                Activity Log
+            </h3>
+
+            <div class="console"
+                 id="event-log">
+
+                <div class="console-line">
+
+                    <span class="t">
+                        --:--:--
+                    </span>
+
+                    Monitoring started…
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+        /* =====================================================
+           CAMERA / FACE MONITORING
+        ===================================================== */
+
+        const video =
+            document.getElementById("camera");
+
+        const canvas =
+            document.getElementById("canvas");
+
+        const context =
+            canvas.getContext("2d");
+
+
+        const cameraStatus =
+            document.getElementById("camera-status");
+
+        const cameraDot =
+            document.getElementById("camera-dot");
+
+
+        const faceStatus =
+            document.getElementById("face-status");
+
+        const faceDot =
+            document.getElementById("face-dot");
+
+
+        navigator.mediaDevices
+            .getUserMedia({
+                video: true,
+                audio: false
+            })
+
+            .then(function (stream) {
+
+                video.srcObject = stream;
+
+                cameraStatus.innerText =
+                    "Connected";
+
+                cameraDot.className =
+                    "status-dot dot-good";
+
+                setInterval(
+                    captureAndSendFrame,
+                    2000
+                );
+
+            })
+
+            .catch(function (error) {
+
+                console.error(
+                    "Camera error:",
+                    error
+                );
+
+                cameraStatus.innerText =
+                    "Access denied";
+
+                cameraDot.className =
+                    "status-dot dot-bad";
+
+            });
+
+
+        function captureAndSendFrame() {
+
+            canvas.width =
+                video.videoWidth;
+
+            canvas.height =
+                video.videoHeight;
+
+
+            context.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+
+            canvas.toBlob(function (blob) {
+
+                if (!blob) return;
+
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "frame",
+                    blob,
+                    "frame.jpg"
+                );
+
+
+                fetch(
+                    "/monitor-face",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                )
+
+                .then(response =>
+                    response.json()
+                )
+
+                .then(data => {
+
+                    if (
+                        data.state ===
+                        "face_detected"
+                    ) {
+
+                        faceStatus.innerText =
+                            "Detected";
+
+                        faceDot.className =
+                            "status-dot dot-good";
+
+                    }
+
+                    else if (
+                        data.state ===
+                        "face_absent"
+                    ) {
+
+                        faceStatus.innerText =
+                            "Not visible";
+
+                        faceDot.className =
+                            "status-dot dot-bad";
+
+                    }
+
+                })
+
+                .catch(error =>
+                    console.error(
+                        "Face monitoring error:",
+                        error
+                    )
+                );
+
+
+            }, "image/jpeg", 0.7);
+
+        }
+
+
+        /* =====================================================
+           BROWSER EVENT LOGGING
+        ===================================================== */
+
+        function logBrowserEvent(
+            eventType,
+            details
+        ) {
+
+            fetch(
+                "/log-browser-event",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        event_type:
+                            eventType,
+
+                        details:
+                            details
+                    })
+                }
+            )
+
+            .then(response =>
+                response.json()
+            )
+
+            .catch(error =>
+                console.error(
+                    "Browser event error:",
+                    error
+                )
+            );
+
+
+            displayEvent(
+                eventType,
+                details
+            );
+
+        }
+
+
+        function displayEvent(
+            eventType,
+            details
+        ) {
+
+            const eventLog =
+                document.getElementById(
+                    "event-log"
+                );
+
+
+            const time =
+                new Date()
+                    .toLocaleTimeString();
+
+
+            const flagTypes = [
+
+                "tab_switch",
+                "focus_lost",
+                "right_click",
+                "copy_attempt",
+                "paste_attempt",
+                "cut_attempt"
+
+            ];
+
+
+            const line =
+                document.createElement(
+                    "div"
+                );
+
+
+            line.className =
+                "console-line" +
+                (
+                    flagTypes.includes(
+                        eventType
+                    )
+                        ? " flag"
+                        : ""
+                );
+
+
+            line.innerHTML =
+                `<span class="t">${time}</span>
+                 ${eventType} — ${details}`;
+
+
+            eventLog.appendChild(line);
+
+
+            eventLog.scrollTop =
+                eventLog.scrollHeight;
+
+        }
+
+
+        /* =====================================================
+           EXAM START
+        ===================================================== */
+
+        window.addEventListener(
+            "load",
+            function () {
+
+                logBrowserEvent(
+                    "exam_started",
+                    "Candidate opened examination page"
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           TAB SWITCH
+        ===================================================== */
+
+        document.addEventListener(
+            "visibilitychange",
+            function () {
+
+                if (document.hidden) {
+
+                    logBrowserEvent(
+                        "tab_switch",
+                        "Candidate left examination page"
+                    );
+
+                }
+
+                else {
+
+                    logBrowserEvent(
+                        "tab_return",
+                        "Candidate returned to examination page"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           WINDOW FOCUS
+        ===================================================== */
+
+        window.addEventListener(
+            "blur",
+            function () {
+
+                logBrowserEvent(
+                    "focus_lost",
+                    "Browser window lost focus"
+                );
+
+            }
+        );
+
+
+        window.addEventListener(
+            "focus",
+            function () {
+
+                logBrowserEvent(
+                    "focus_gained",
+                    "Browser window regained focus"
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           COPY / PASTE / CUT
+        ===================================================== */
+
+        document.addEventListener(
+            "copy",
+            function () {
+
+                logBrowserEvent(
+                    "copy_attempt",
+                    "Candidate attempted to copy content"
+                );
+
+            }
+        );
+
+
+        document.addEventListener(
+            "paste",
+            function () {
+
+                logBrowserEvent(
+                    "paste_attempt",
+                    "Candidate attempted to paste content"
+                );
+
+            }
+        );
+
+
+        document.addEventListener(
+            "cut",
+            function () {
+
+                logBrowserEvent(
+                    "cut_attempt",
+                    "Candidate attempted to cut content"
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           RIGHT CLICK
+        ===================================================== */
+
+        document.addEventListener(
+            "contextmenu",
+            function (event) {
+
+                event.preventDefault();
+
+                logBrowserEvent(
+                    "right_click",
+                    "Candidate attempted right click"
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           KEYBOARD ACTIVITY
+        ===================================================== */
+
+        document.addEventListener(
+            "keydown",
+            function () {
+
+                logBrowserEvent(
+                    "keyboard_activity",
+                    "Candidate pressed a keyboard key"
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           MOUSE ACTIVITY
+        ===================================================== */
+
+        let lastMouseEventTime = 0;
+
+
+        document.addEventListener(
+            "mousemove",
+            function () {
+
+                const now =
+                    Date.now();
+
+
+                if (
+                    now -
+                    lastMouseEventTime >=
+                    5000
+                ) {
+
+                    lastMouseEventTime =
+                        now;
+
+
+                    logBrowserEvent(
+                        "mouse_activity",
+                        "Candidate moved mouse"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           ANSWER SELECTION
+        ===================================================== */
+
+        document
+            .querySelectorAll(
+                'input[type="radio"]'
+            )
+            .forEach(function (option) {
+
+                option.addEventListener(
+                    "change",
+                    function () {
+
+                        logBrowserEvent(
+                            "answer_selected",
+                            "Candidate selected an answer"
+                        );
+
+                    }
+                );
+
+            });
+
+
+        /* =====================================================
+           SAVE ANSWER
+        ===================================================== */
+
+        function submitAnswer(
+            questionNumber
+        ) {
+
+            const selected =
+                document.querySelector(
+                    `input[name="answer_${questionNumber}"]:checked`
+                );
+
+
+            if (!selected) {
+
+                alert(
+                    "Please select an option before saving."
+                );
+
+                return;
+
+            }
+
+
+            logBrowserEvent(
+                "answer_saved",
+                `Candidate saved answer for Question ${questionNumber}`
+            );
+
+
+            alert(
+                `Question ${questionNumber} answer saved successfully.`
+            );
+
+        }
+
+
+        /* =====================================================
+           SESSION LIFECYCLE
+        ===================================================== */
+
+        const pauseBtn =
+            document.getElementById(
+                "pauseBtn"
+            );
+
+
+        const resumeBtn =
+            document.getElementById(
+                "resumeBtn"
+            );
+
+
+        const submitBtn =
+            document.getElementById(
+                "submitBtn"
+            );
+
+
+        const sessionBadge =
+            document.getElementById(
+                "session-badge"
+            );
+
+
+        /* =====================================================
+           PAUSE EXAM
+        ===================================================== */
+
+        pauseBtn.addEventListener(
+            "click",
+            function () {
+
+                fetch(
+                    "/pause-exam",
+                    {
+                        method: "POST"
+                    }
+                )
+
+                .then(r =>
+                    r.json()
+                )
+
+                .then(() => {
+
+                    sessionBadge.textContent =
+                        "paused";
+
+
+                    sessionBadge.className =
+                        "badge badge-paused";
+
+
+                    pauseBtn.style.display =
+                        "none";
+
+
+                    resumeBtn.style.display =
+                        "inline-block";
+
+
+                    logBrowserEvent(
+                        "exam_paused",
+                        "Candidate paused the exam"
+                    );
+
+                });
+
+            }
+        );
+
+
+        /* =====================================================
+           RESUME EXAM
+        ===================================================== */
+
+        resumeBtn.addEventListener(
+            "click",
+            function () {
+
+                fetch(
+                    "/resume-exam",
+                    {
+                        method: "POST"
+                    }
+                )
+
+                .then(r =>
+                    r.json()
+                )
+
+                .then(() => {
+
+                    sessionBadge.textContent =
+                        "in progress";
+
+
+                    sessionBadge.className =
+                        "badge badge-progress";
+
+
+                    resumeBtn.style.display =
+                        "none";
+
+
+                    pauseBtn.style.display =
+                        "inline-block";
+
+
+                    logBrowserEvent(
+                        "exam_resumed",
+                        "Candidate resumed the exam"
+                    );
+
+                });
+
+            }
+        );
+
+
+        /* =====================================================
+           SUBMIT EXAM
+        ===================================================== */
+
+        submitBtn.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    !confirm(
+                        "Submit your exam now? You won't be able to make further changes."
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                fetch(
+                    "/submit-exam",
+                    {
+                        method: "POST"
+                    }
+                )
+
+                .then(r =>
+                    r.json()
+                )
+
+                .then(data => {
+
+                    sessionBadge.textContent =
+                        "submitted";
+
+
+                    sessionBadge.className =
+                        "badge badge-submitted";
+
+
+                    alert(
+                        "Exam submitted successfully."
+                    );
+
+
+                    window.location.href =
+                        data.redirect ||
+                        "/dashboard";
+
+                });
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>

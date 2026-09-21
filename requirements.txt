@@ -1,2 +1,9 @@
 python -m pip install flask
 python -m  pip install opencv-python
+pythom -m pip install opencv
+
+Flask>=3.0
+Werkzeug>=3.0
+opencv-python>=4.9
+numpy>=1.26
+Faker>=24.0
