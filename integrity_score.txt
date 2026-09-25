@@ -1,0 +1,13 @@
+Exam Duration       = 60 minutes
+Face Present        = 55 minutes
+Face Presence Ratio = 91.67%
+
+Suspicious Events:
+    excessive_tab_switch = 10 points
+    long_face_absence    = 25 points
+
+Total Penalty = 35
+
+Integrity Score = 100 - 35 = 65
+
+Risk Level = Medium
