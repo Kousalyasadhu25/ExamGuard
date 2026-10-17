@@ -2,11 +2,6 @@ python -m pip install flask
 python -m  pip install opencv-python
 pythom -m pip install opencv
 
-Flask>=3.0
-Werkzeug>=3.0
-opencv-python>=4.9
-numpy>=1.26
-Faker>=24.0
 
 
 Python -m pip install pandas metaplotlib seaborn scikit-learn
@@ -26,3 +21,20 @@ langchain-core
 langchain-openai
 
 openai
+
+
+Flask>=3.0.0
+Werkzeug>=3.0.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+
+opencv-python
+numpy
+langchain
+langchain-core
+langchain-openai
+langdetect
+streamlit
+
+Python -m pip install pandas metaplotlib seaborn scikit-learn

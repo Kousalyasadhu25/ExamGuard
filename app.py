@@ -14,7 +14,11 @@ from monitoring.integrity_score import compute_integrity_score
 from monitoring.face_monitor import close_open_face_event
 
 from ai.integrity_agent import generate_real_integrity_report
+from monitoring.alert_manager import create_alert, create_risk_alert
+from monitoring.incident_logger import create_incident
 
+import base64
+from monitoring.evidence_manager import save_evidence
 
 app = Flask(__name__)
 app.secret_key = "examguard-secret-key"
@@ -361,6 +365,16 @@ def submit_exam():
         candidate_id,
         exam_session_id
     )
+
+
+    # connection alert to integrity score
+    
+    create_risk_alert(
+        candidate_id=candidate_id,
+        session_id=exam_session_id,
+        risk_level=result["risk_level"],
+        integrity_score=result["integrity_score"]
+    )
     
     # --------------------------------------------------
     # 5. Generate integrity report using AI agent
@@ -439,6 +453,7 @@ def monitor_face():
     return {"success": True, "state": current_state}
 
 
+
 # ------------------------------------------------
 # BROWSER EVENT LOGGING + RULE-BASED DETECTION
 # ------------------------------------------------
@@ -481,11 +496,42 @@ def log_browser_event():
         ))
 
         connection.commit()
+        
+        print("================================")
+        print("BROWSER EVENT RECEIVED")
+        print("candidate_id:", candidate_id)
+        print("session_id:", exam_session_id)
+        print("event_type:", event_type)
+        print("details:", details)
+        print("================================")
+
+        screenshot_required = False
+
 
         # Run the rule-based suspicious event detection engine
-        event_detector.evaluate_browser_event(
+        rule_results = event_detector.evaluate_browser_event(
             connection, candidate_id, exam_session_id, event_type
         )
+        
+        print("rule_results:", rule_results)
+        
+        if rule_results:
+            create_incident(candidate_id = candidate_id,
+                            session_id= exam_session_id,
+                            event_type=rule_results["event_type"],
+                            description=rule_results["description"],
+                            severity=rule_results["severity"]
+                            )
+            create_alert(candidate_id = candidate_id,
+                         session_id= exam_session_id,
+                         alert_type=rule_results["event_type"],
+                         message=rule_results["description"],
+                         severity=rule_results["severity"]
+            )
+
+            screenshot_required = True
+
+            
 
     except Exception as e:
         connection.rollback()
@@ -494,9 +540,136 @@ def log_browser_event():
     finally:
         connection.close()
 
-    return {"success": True, "message": "Browser event saved"}
+    return {"success": True, "message": "Browser event saved" , "screenshot_required":screenshot_required}
 
 
+app.route("/upload-evidence", methods=["POST"])
+def upload_evidence():
+
+    # --------------------------------------------------
+    # Check active candidate/session
+    # --------------------------------------------------
+
+    if (
+        "candidate_id" not in session
+        or "exam_session_id" not in session
+    ):
+
+        return {
+            "success": False,
+            "message": "No active exam session"
+        }, 400
+
+    # --------------------------------------------------
+    # Read JSON
+    # --------------------------------------------------
+
+    data = request.get_json(
+        silent=True
+    )
+
+    if not data:
+
+        return {
+            "success": False,
+            "message": "No evidence data received"
+        }, 400
+
+    image_data = data.get(
+        "image"
+    )
+
+    if not image_data:
+
+        return {
+            "success": False,
+            "message": "Screenshot is required"
+        }, 400
+
+    try:
+
+        # --------------------------------------------------
+
+        if "," in image_data:
+
+            image_data = image_data.split(
+                ",",
+                1
+            )[1]
+
+        # --------------------------------------------------
+        # Base64 → binary bytes
+        # --------------------------------------------------
+
+        file_data = base64.b64decode(
+            image_data
+        )
+
+        if not file_data:
+
+            return {
+                "success": False,
+                "message": "Screenshot data is empty"
+            }, 400
+
+        # --------------------------------------------------
+        # Save evidence
+        #
+        # save_evidence() calculates SHA-256 internally
+        # --------------------------------------------------
+
+        result = save_evidence(
+            candidate_id=session["candidate_id"],
+            session_id=session["exam_session_id"],
+            evidence_type="screenshot",
+            filename="suspicious_event.jpg",
+            mime_type="image/jpeg",
+            file_data=file_data
+        )
+
+        return {
+            "success": True,
+            "message": "Screenshot evidence saved",
+            "sha256_hash": result["sha256_hash"]
+        }
+
+    except Exception as e:
+
+        return {
+            "success": False,
+            "message": str(e)
+        }, 500
+
+@app.route("/verify-evidence/<int:evidence_id>", methods=["GET"])
+def verify_evidence(evidence_id):
+    
+    if "candidate_id" not in session:
+        return {"success": False, "message": "Candidate not logged in"}, 401
+
+    results = verify_evidence(evidence_id)
+    if results["message"]=="Evidence is invalid":
+        return {"success": False, "message": "Evidence is invalid"}, 400
+    return {"success": True, "message": "Evidence is valid", "evidence_id": results["evidence_id"], "stored_hash": results["stored_hash"], "calculated_hash": results["calculated_hash"]}, 200
+
+@app.route("/ai-report/<int:candidate_id>/<session_id>", methods=["GET"])
+def ai_report(candidate_id, session_id):
+
+    result = get_ai_report(
+        candidate_id,
+        session_id
+    )
+
+    if result is None:
+        return {
+            "success": False,
+            "message": "AI report not found"
+        }, 404
+
+    return {
+        "success": True,
+        "report": result
+    }
+    
 # ------------------------------------------------
 # RUN FLASK
 # ------------------------------------------------

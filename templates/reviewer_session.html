@@ -1,0 +1,433 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ExamGuard - Session Review</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 30px;
+            background: #f3f6fb;
+            color: #243247;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 6px;
+            color: #172b4d;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin: 0 0 20px;
+            color: #243b5a;
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .session-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 12px 18px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #e5eaf1;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+            min-width: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .metric {
+            padding: 20px;
+            border: 1px solid #e6ebf2;
+            border-radius: 10px;
+            background: #f9fbff;
+            min-width: 0;
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 13px;
+            margin: 0 0 10px;
+        }
+
+        .value {
+            font-size: 27px;
+            font-weight: bold;
+            color: #1e3a5f;
+            overflow-wrap: anywhere;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.4px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid #e8edf3;
+            vertical-align: top;
+            overflow-wrap: anywhere;
+        }
+
+        tbody tr:hover {
+            background: #f8faff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .report {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            line-height: 1.8;
+            color: #334155;
+            background: #f8fafc;
+            border-left: 4px solid #5276b8;
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .muted {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            padding: 10px 0 20px;
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            body {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 12px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .value {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <header>
+        <h1>ExamGuard Reviewer Dashboard</h1>
+        <p class="subtitle">
+            Examination session monitoring and evidence review
+        </p>
+    </header>
+
+    <div class="session-info">
+        <div class="info-item">
+            <strong>Candidate ID:</strong>
+            {{ summary.candidate_id }}
+        </div>
+
+        <div class="info-item">
+            <strong>Session ID:</strong>
+            {{ summary.session_id }}
+        </div>
+    </div>
+
+    <!-- Integrity Summary -->
+    <section class="card">
+        <h2>Integrity Summary</h2>
+
+        <div class="grid">
+            <div class="metric">
+                <p class="metric-label">Integrity Score</p>
+                <div class="value">
+                    {{ summary.integrity_score.integrity_score }}
+                </div>
+            </div>
+
+            <div class="metric">
+                <p class="metric-label">Risk Level</p>
+                <div class="value">
+                    {{ summary.integrity_score.risk_level }}
+                </div>
+            </div>
+
+            <div class="metric">
+                <p class="metric-label">Event Penalty</p>
+                <div class="value">
+                    {{ summary.integrity_score.event_penalty }}
+                </div>
+            </div>
+
+            <div class="metric">
+                <p class="metric-label">Face Presence</p>
+                <div class="value">
+                    {{ summary.integrity_score.face_presence_ratio }}%
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Incident History -->
+    <section class="card">
+        <h2>Incident History</h2>
+
+        {% if summary.incidents %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Description</th>
+                        <th>Severity</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for incident in summary.incidents %}
+                    <tr>
+                        <td>{{ incident.event_type }}</td>
+                        <td>{{ incident.description }}</td>
+                        <td>
+                            <span class="badge
+                                {% if incident.severity|string|lower == 'high' %}high
+                                {% elif incident.severity|string|lower == 'medium' %}medium
+                                {% else %}low{% endif %}">
+                                {{ incident.severity }}
+                            </span>
+                        </td>
+                        <td>{{ incident.event_time }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">No incidents recorded for this session.</div>
+        {% endif %}
+    </section>
+
+    <!-- Alerts -->
+    <section class="card">
+        <h2>Alerts</h2>
+
+        {% if summary.alerts %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Message</th>
+                        <th>Severity</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for alert in summary.alerts %}
+                    <tr>
+                        <td>{{ alert.alert_type }}</td>
+                        <td>{{ alert.message }}</td>
+                        <td>
+                            <span class="badge
+                                {% if alert.severity|string|lower == 'high' %}high
+                                {% elif alert.severity|string|lower == 'medium' %}medium
+                                {% else %}low{% endif %}">
+                                {{ alert.severity }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge status">
+                                {{ alert.status }}
+                            </span>
+                        </td>
+                        <td>{{ alert.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">No alerts recorded for this session.</div>
+        {% endif %}
+    </section>
+
+    <!-- Evidence Records -->
+    <section class="card">
+        <h2>Evidence Records</h2>
+
+        {% if summary.evidence %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Evidence ID</th>
+                        <th>Type</th>
+                        <th>Filename</th>
+                        <th>SHA-256 Hash</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in summary.evidence %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.evidence_type }}</td>
+                        <td>{{ item.filename }}</td>
+                        <td>{{ item.sha256_hash }}</td>
+                        <td>{{ item.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">No evidence records found.</div>
+        {% endif %}
+    </section>
+
+    <!-- AI Integrity Report -->
+    <section class="card">
+        <h2>AI Integrity Report</h2>
+
+        {% if summary.ai_report %}
+        <p class="muted">
+            Generated: {{ summary.ai_report.created_at }}
+        </p>
+
+        <div class="report">{{ summary.ai_report.report }}</div>
+        {% else %}
+        <div class="empty">
+            No AI report is available for this session.
+        </div>
+        {% endif %}
+    </section>
+
+    <footer class="footer">
+        ExamGuard | Smart Examination Monitoring Platform
+        <br>
+        Recorded events and risk classifications support human review
+        and do not independently establish misconduct.
+    </footer>
+
+</div>
+</body>
+</html>
+```
