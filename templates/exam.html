@@ -1,25 +1,24 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Examination — ExamGuard</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <title>ExamGuard | Online Examination</title>
 
     <style>
         :root {
-            --bg: #f5f7fb;
-            --card: #ffffff;
-            --text: #172033;
-            --muted: #667085;
-            --border: #e4e7ec;
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --success: #12b76a;
-            --danger: #f04438;
-            --shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+            --navy: #10213b;
+            --navy-light: #1b3558;
+            --blue: #356ae6;
+            --bg: #f3f6fb;
+            --white: #ffffff;
+            --text: #18253b;
+            --muted: #64748b;
+            --border: #e1e8f2;
+            --green: #16865c;
+            --red: #d83b4b;
+            --orange: #d97706;
         }
 
         * {
@@ -28,2243 +27,1462 @@
 
         body {
             margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
             background: var(--bg);
             color: var(--text);
-            font-family: Inter, "Segoe UI", Arial, sans-serif;
         }
 
-        /* ================= NAVBAR ================= */
+        button, select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
 
         .navbar {
-            background: #111827;
-            color: #fff;
-            min-height: 68px;
-            padding: 0 5%;
+            min-height: 70px;
+            padding: 15px 5%;
+            background: var(--navy);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, .12);
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
-        .navbar-brand {
+        .brand {
             font-size: 22px;
             font-weight: 800;
-            letter-spacing: .2px;
         }
 
-        .logo-dot {
-            width: 10px;
-            height: 10px;
-            display: inline-block;
-            border-radius: 50%;
-            background: #7c3aed;
-            margin-right: 8px;
-            box-shadow: 0 0 12px rgba(124, 58, 237, .7);
+        .brand span {
+            color: #8db4ff;
         }
 
-        /* ================= PAGE ================= */
+        .candidate {
+            color: #e3eaf6;
+            font-size: 14px;
+        }
 
         .page {
-            max-width: 1180px;
-            margin: 32px auto;
-            padding: 0 20px 50px;
+            width: min(1200px, 94%);
+            margin: 28px auto;
         }
 
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: var(--shadow);
+        .page-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
         }
 
-        .card h1,
-        .card h3 {
-            margin-top: 0;
+        h1 {
+            margin: 0 0 7px;
+            font-size: 27px;
         }
 
         .subtitle {
             color: var(--muted);
-            line-height: 1.6;
+            margin: 0;
+            font-size: 14px;
         }
 
-        /* ================= BUTTONS ================= */
-
-        .btn {
-            border: 0;
-            border-radius: 10px;
-            padding: 11px 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: .2s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            filter: brightness(.97);
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #eef2ff;
-            color: #3730a3;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 18px;
-        }
-
-        /* ================= MONITORING ================= */
-
-        .monitor-grid {
-            display: grid;
-            grid-template-columns: 330px 1fr;
-            gap: 24px;
-            align-items: start;
-        }
-
-        .monitor-card {
-            position: sticky;
-            top: 20px;
-        }
-
-        #camera {
-            width: 100%;
-            max-width: 100%;
-            aspect-ratio: 4 / 3;
-            object-fit: cover;
+        .timer-box {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 13px 20px;
             border-radius: 12px;
-            background: #0b0f19;
-            display: block;
-            margin-top: 16px;
-            border: 3px solid #e5e7eb;
+            min-width: 145px;
         }
 
-        #canvas {
-            display: none;
+        .timer-label {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 5px;
         }
 
-        /* ================= STATUS ================= */
+        #timer {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--navy);
+            font-variant-numeric: tabular-nums;
+        }
 
-        .status-line {
-            display: grid;
-            grid-template-columns: 10px 1fr auto;
+        .status-bar {
+            display: flex;
             align-items: center;
             gap: 10px;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f2f5;
+            flex-wrap: wrap;
+            padding: 14px 16px;
+            margin-bottom: 22px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
         }
 
-        .status-line:last-of-type {
-            border-bottom: 0;
-        }
-
-        .status-label {
+        .status-pill {
+            padding: 7px 10px;
+            border-radius: 20px;
+            background: #eef2f7;
             color: var(--muted);
-        }
-
-        .status-value {
+            font-size: 12px;
             font-weight: 700;
         }
 
-        .status-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            display: inline-block;
+        .status-pill.good {
+            background: #e4f7ee;
+            color: var(--green);
         }
 
-        .dot-neutral {
-            background: #98a2b3;
+        .status-pill.bad {
+            background: #ffebed;
+            color: var(--red);
         }
 
-        .dot-good {
-            background: var(--success);
-            box-shadow: 0 0 0 4px rgba(18, 183, 106, .12);
+        .status-pill.warning {
+            background: #fff3d8;
+            color: var(--orange);
         }
 
-        .dot-bad {
-            background: var(--danger);
-            box-shadow: 0 0 0 4px rgba(240, 68, 56, .12);
-        }
+   
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 480px;
+    gap: 22px;
+    align-items: start;
 
-        /* ================= QUESTIONS ================= */
+}
 
-        .questions {
-            display: grid;
-            gap: 18px;
-        }
-
-        .question-card {
-            background: #fff;
+        .card {
+            background: white;
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 22px;
-            box-shadow: 0 5px 18px rgba(16, 24, 40, .05);
+            border-radius: 15px;
+            padding: 23px;
+            box-shadow: 0 5px 18px rgba(20, 40, 75, 0.035);
         }
 
-        .question-number {
-            display: inline-flex;
+        .question-top {
+            display: flex;
             align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            background: #eef2ff;
-            color: var(--primary);
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .question-count {
+            color: var(--blue);
+            font-size: 13px;
             font-weight: 800;
-            margin-right: 8px;
         }
 
         .question-text {
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 20px;
             line-height: 1.55;
-            margin: 0 0 16px;
+            margin: 0 0 23px;
         }
 
         .options {
             display: grid;
-            gap: 10px;
+            gap: 12px;
         }
 
         .option {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
-            padding: 13px 14px;
+            padding: 15px;
             border: 1px solid var(--border);
             border-radius: 10px;
             cursor: pointer;
-            color: #344054;
-            font-size: 15px;
-            transition: .2s ease;
+            line-height: 1.5;
+            transition: border-color 0.15s, background 0.15s;
         }
 
         .option:hover {
-            border-color: #a5b4fc;
-            background: #f8f8ff;
+            border-color: #8aa8f6;
+            background: #f8faff;
+        }
+
+        .option.selected {
+            border-color: var(--blue);
+            background: #edf3ff;
         }
 
         .option input {
-            accent-color: var(--primary);
-            width: 17px;
-            height: 17px;
+            margin-top: 4px;
+            accent-color: var(--blue);
         }
 
-        .question-actions {
-            margin-top: 14px;
+        .question-navigation {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 27px;
         }
 
-        /* ================= ACTIVITY LOG ================= */
-
-        .console {
-            max-height: 220px;
-            overflow-y: auto;
-            background: #101828;
-            color: #d0d5dd;
-            border-radius: 10px;
-            padding: 12px;
-        }
-
-        .console-line {
-            padding: 6px 0;
+        .btn {
+            padding: 11px 16px;
+            border: 0;
+            border-radius: 9px;
+            font-weight: 700;
             font-size: 13px;
         }
 
-        .console-line.flag {
-            color: #fda29b;
+        .btn-primary {
+            background: var(--blue);
+            color: white;
         }
 
-        .console-line .t {
-            color: #98a2b3;
-            margin-right: 10px;
+        .btn-primary:hover {
+            background: #2457cc;
         }
 
-        /* ================= RESPONSIVE ================= */
+        .btn-secondary {
+            background: #edf1f7;
+            color: var(--navy);
+        }
 
+        .btn-danger {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--navy);
+        }
+
+        .side-card {
+            margin-bottom: 18px;
+        }
+
+        .side-card h3 {
+            margin: 0 0 15px;
+            font-size: 16px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 7px;
+            background: #e9eef6;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0 15px;
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            background: var(--blue);
+            transition: width 0.2s;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .question-number {
+            height: 38px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .question-number.current {
+            background: var(--blue);
+            color: white;
+            border-color: var(--blue);
+        }
+
+        .question-number.answered {
+            background: #e4f7ee;
+            color: var(--green);
+            border-color: #b9e8d1;
+        }
+
+        .question-number.current.answered {
+            background: var(--blue);
+            color: white;
+        }
+
+        .camera-preview {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: #101827;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .screen-preview {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #101827;
+            border-radius: 8px;
+            margin-top: 10px;
+            object-fit: contain;
+        }
+
+        .small-text {
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--muted);
+            margin: 10px 0 0;
+        }
+
+        .event-box {
+            max-height: 170px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .event-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #edf0f5;
+            overflow-wrap: anywhere;
+        }
+
+        .full-width {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .notice {
+            padding: 12px;
+            border-radius: 9px;
+            font-size: 12px;
+            line-height: 1.6;
+            background: #f2f6ff;
+            color: #31528b;
+            margin-bottom: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .paused-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(10, 22, 40, 0.72);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .paused-box {
+            width: min(420px, 100%);
+            padding: 30px;
+            border-radius: 15px;
+            background: white;
+            text-align: center;
+        }
+
+        .paused-box h2 {
+            margin-top: 0;
+        }
+
+        .paused-box p {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .message {
+            margin-top: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.error {
+            color: var(--red);
+        }
+
+        .message.success {
+            color: var(--green);
+        }
+        
         @media (max-width: 850px) {
-
-            .monitor-grid {
+            .layout {
                 grid-template-columns: 1fr;
             }
 
-            .monitor-card {
-                position: static;
+            .sidebar {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 15px;
+            }
+
+            .side-card {
+                margin-bottom: 0;
             }
         }
 
-        @media (max-width: 600px) {
-
-            .page {
-                margin-top: 20px;
-                padding: 0 12px 35px;
+        @media (max-width: 540px) {
+            .sidebar {
+                grid-template-columns: 1fr;
             }
 
-            .card,
-            .question-card {
-                padding: 18px;
+            .card {
+                padding: 17px;
             }
 
-            .navbar {
-                padding: 0 16px;
+            h1 {
+                font-size: 23px;
             }
 
-            .btn {
-                width: 100%;
+            .question-text {
+                font-size: 18px;
             }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- ================= NAVBAR ================= -->
-
     <header class="navbar">
-
-        <div class="navbar-brand">
-            <span class="logo-dot"></span>
-            ExamGuard
+        <div class="brand">Exam<span>Guard</span></div>
+        <div class="candidate">
+            Candidate:
+            <strong>{{ candidate_name | default('Candidate', true) }}</strong>
         </div>
-
-        <div class="navbar-links">
-
-            <span id="session-badge"
-                  class="badge badge-progress">
-
-                in progress
-
-            </span>
-
-        </div>
-
     </header>
 
-
-    <!-- ================= MAIN ================= -->
-
     <main class="page">
-
-        <!-- ================= EXAM HEADER ================= -->
-
-        <div class="card" style="margin-bottom:24px;">
-
-            <h1>
-                Aptitude Examination
-            </h1>
-
-            <p class="subtitle">
-
-                {% if candidate_name %}
-                    Candidate: {{ candidate_name }} —
-                {% endif %}
-
-                Answer all 10 aptitude questions carefully.
-                Keep this tab focused and your face within the camera frame.
-
-            </p>
-
-
-            <div class="btn-row">
-
-                <button id="pauseBtn"
-                        class="btn btn-secondary">
-
-                    Pause exam
-
-                </button>
-
-
-                <button id="resumeBtn"
-                        class="btn btn-secondary"
-                        style="display:none;">
-
-                    Resume exam
-
-                </button>
-
-
-                <button id="submitBtn"
-                        class="btn btn-danger">
-
-                    Submit exam
-
-                </button>
-
+        <section class="page-heading">
+            <div>
+                <h1>Online Examination</h1>
+                <p class="subtitle">
+                    Answer each question and submit your exam when finished.
+                </p>
             </div>
 
+            <div class="timer-box">
+                <div class="timer-label">TIME REMAINING</div>
+                <div id="timer">30:00</div>
+            </div>
+        </section>
+
+        <section class="status-bar">
+            <span class="status-pill" id="cameraStatus">Camera: Starting</span>
+            <span class="status-pill" id="faceStatus">Face: Waiting</span>
+            <span class="status-pill" id="screenStatus">Screen: Not shared</span>
+            <span class="status-pill" id="examStatus">Exam: Active</span>
+        </section>
+
+        <div class="layout">
+            <section class="card">
+                <div class="notice">
+                    Keep your face visible, share your exam screen when requested,
+                    and avoid leaving the exam page. Monitoring events are recorded
+                    for reviewer assessment.
+                </div>
+
+                <div class="question-top">
+                    <span class="question-count" id="questionCount">
+                        QUESTION 1 OF 10
+                    </span>
+                    <span class="status-pill" id="answerState">Not answered</span>
+                </div>
+
+                <h2 class="question-text" id="questionText"></h2>
+
+                <div class="options" id="optionsContainer"></div>
+
+                <div id="actionMessage" class="message" role="status"></div>
+
+                <div class="question-navigation">
+                    <button class="btn btn-secondary" id="previousBtn"
+                            type="button" onclick="previousQuestion()">
+                        Previous
+                    </button>
+
+                    <button class="btn btn-outline" id="clearBtn"
+                            type="button" onclick="clearAnswer()">
+                        Clear answer
+                    </button>
+
+                    <button class="btn btn-primary" id="nextBtn"
+                            type="button" onclick="nextQuestion()">
+                        Next
+                    </button>
+                </div>
+            </section>
+
+            <aside class="sidebar">
+                <section class="card side-card">
+                    <h3>Question Navigator</h3>
+                    <div>
+                        <span class="small-text" id="progressText">
+                            0 of 10 answered
+                        </span>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+
+                    <div class="question-grid" id="questionGrid"></div>
+
+                    <p class="small-text">
+                        Blue = current question. Green = answered.
+                    </p>
+                </section>
+
+                <section class="card side-card">
+                    <h3>Camera Monitoring</h3>
+                    <video id="camera" class="camera-preview"
+                           autoplay muted playsinline></video>
+                    <canvas id="canvas" class="hidden"></canvas>
+
+                    <p class="small-text" id="cameraMessage">
+                        Requesting camera access...
+                    </p>
+                </section>
+
+                <section class="card side-card">
+                    <h3>Screen Sharing</h3>
+
+                    <button class="btn btn-primary full-width"
+                            id="shareScreenBtn" type="button"
+                            onclick="startScreenCapture()">
+                        Share screen
+                    </button>
+
+                    <video id="screenVideo" class="screen-preview"
+                           autoplay muted playsinline></video>
+
+                    <p class="small-text" id="screenMessage">
+                        Click Share screen and select the screen or window
+                        you intend to share.
+                    </p>
+                </section>
+
+                <section class="card side-card">
+                    <h3>Exam Activity</h3>
+                    <div class="event-box" id="eventLog"
+                         aria-live="polite">
+                        <div class="event-item">Exam monitoring initialized.</div>
+                    </div>
+
+                    <button class="btn btn-secondary full-width"
+                            id="pauseBtn" type="button"
+                            onclick="pauseExam()">
+                        Pause exam
+                    </button>
+
+                    <button class="btn btn-danger full-width"
+                            id="submitBtn" type="button"
+                            onclick="submitExam()">
+                        Submit exam
+                    </button>
+
+                    <p class="small-text">
+                        Your selected answers remain in this page until
+                        submission. Persistent answer storage requires a
+                        separate backend endpoint.
+                    </p>
+                </section>
+            </aside>
         </div>
-
-
-        <!-- ================= MONITOR + QUESTIONS ================= -->
-
-        <div class="monitor-grid">
-
-
-            <!-- ================= MONITORING CARD ================= -->
-
-            <div class="card monitor-card">
-
-                <h3>
-                    Monitoring Status
-                </h3>
-
-
-                <!-- Camera -->
-
-                <div class="status-line">
-
-                    <span id="camera-dot"
-                          class="status-dot dot-neutral">
-                    </span>
-
-                    <span class="status-label">
-                        Camera
-                    </span>
-
-                    <span id="camera-status"
-                          class="status-value">
-
-                        Starting…
-
-                    </span>
-
-                </div>
-
-
-                <!-- Face -->
-
-                <div class="status-line">
-
-                    <span id="face-dot"
-                          class="status-dot dot-neutral">
-                    </span>
-
-                    <span class="status-label">
-                        Face presence
-                    </span>
-
-                    <span id="face-status"
-                          class="status-value">
-
-                        Waiting…
-
-                    </span>
-
-                </div>
-
-
-                <!-- Browser -->
-
-                <div class="status-line">
-
-                    <span id="browser-dot"
-                          class="status-dot dot-good">
-                    </span>
-
-                    <span class="status-label">
-                        Browser activity
-                    </span>
-
-                    <span id="browser-status"
-                          class="status-value">
-
-                        Active
-
-                    </span>
-
-                </div>
-
-
-                <video id="camera"
-                       autoplay
-                       playsinline>
-                </video>
-
-                <video id = "screenvideo" autoplay muted ></video>
-
-                <canvas id="canvas"></canvas>
-
-            </div>
-
-
-            <!-- ================= QUESTIONS ================= -->
-
-            <div class="questions">
-
-
-                <!-- QUESTION 1 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            1
-                        </span>
-
-                        If 20% of a number is 48,
-                        what is the number?
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-
-                            <input type="radio"
-                                   name="answer_1"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                180
-                            </span>
-
-                        </label>
-
-
-                        <label class="option">
-
-                            <input type="radio"
-                                   name="answer_1"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                220
-                            </span>
-
-                        </label>
-
-
-                        <label class="option">
-
-                            <input type="radio"
-                                   name="answer_1"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                240
-                            </span>
-
-                        </label>
-
-
-                        <label class="option">
-
-                            <input type="radio"
-                                   name="answer_1"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                260
-                            </span>
-
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(1)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION 2 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            2
-                        </span>
-
-                        A train travels 360 km in 4 hours.
-                        What is its average speed?
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_2"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                80 km/h
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_2"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                90 km/h
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_2"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                100 km/h
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_2"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                120 km/h
-                            </span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(2)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION 3 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            3
-                        </span>
-
-                        The ratio of boys to girls in a class
-                        is 3:2. If there are 30 boys,
-                        how many girls are there?
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_3"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                15
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_3"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                20
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_3"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                25
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_3"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                45
-                            </span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(3)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION 4 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            4
-                        </span>
-
-                        A shopkeeper buys an item for ₹800
-                        and sells it for ₹920.
-                        What is the profit percentage?
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_4"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                10%
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_4"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                12%
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_4"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                15%
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_4"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                20%
-                            </span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(4)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION 5 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            5
-                        </span>
-
-                        What is the simple interest on ₹5,000
-                        at 8% per annum for 2 years?
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_5"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                ₹400
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_5"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                ₹600
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_5"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                ₹800
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_5"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                ₹1,000
-                            </span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(5)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION 6 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            6
-                        </span>
-
-                        A can complete a work in 12 days
-                        and B can complete it in 18 days.
-                        How many days will they take together?
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_6"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                6.5 days
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_6"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                7.2 days
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_6"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                8 days
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_6"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                9 days
-                            </span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(6)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION 7 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            7
-                        </span>
-
-                        The average of 12, 18, 20, 25 and 30 is:
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_7"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                19
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_7"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                20
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_7"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                21
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_7"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                22
-                            </span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(7)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION 8 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            8
-                        </span>
-
-                        If a number is increased by 25%
-                        and becomes 250,
-                        what was the original number?
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_8"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                180
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_8"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                200
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_8"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                210
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_8"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                225
-                            </span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(8)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION 9 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            9
-                        </span>
-
-                        A man walks at 6 km/h.
-                        How much time will he take
-                        to cover 15 km?
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_9"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                2 hours
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_9"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                2 hours 15 minutes
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_9"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                2 hours 30 minutes
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_9"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                3 hours
-                            </span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(9)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION 10 -->
-
-                <div class="question-card">
-
-                    <p class="question-text">
-
-                        <span class="question-number">
-                            10
-                        </span>
-
-                        Find the next number:
-
-                        3, 6, 12, 24, __
-
-                    </p>
-
-
-                    <div class="options">
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_10"
-                                   value="A">
-
-                            <span>
-                                <strong>A.</strong>
-                                36
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_10"
-                                   value="B">
-
-                            <span>
-                                <strong>B.</strong>
-                                42
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_10"
-                                   value="C">
-
-                            <span>
-                                <strong>C.</strong>
-                                48
-                            </span>
-                        </label>
-
-
-                        <label class="option">
-                            <input type="radio"
-                                   name="answer_10"
-                                   value="D">
-
-                            <span>
-                                <strong>D.</strong>
-                                54
-                            </span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="question-actions">
-
-                        <button class="btn btn-primary"
-                                type="button"
-                                onclick="submitAnswer(10)">
-
-                            Save answer
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ================= ACTIVITY LOG ================= -->
-
-        <div class="card" style="margin-top:24px;">
-
-            <h3>
-                Activity Log
-            </h3>
-
-            <div class="console"
-                 id="event-log">
-
-                <div class="console-line">
-
-                    <span class="t">
-                        --:--:--
-                    </span>
-
-                    Monitoring started…
-
-                </div>
-
-            </div>
-
-        </div>
-
     </main>
 
-
-    <!-- ================= JAVASCRIPT ================= -->
+    <div class="paused-overlay hidden" id="pausedOverlay">
+        <div class="paused-box">
+            <h2>Exam Paused</h2>
+            <p>
+                Monitoring has been paused locally. Resume the exam to
+                continue answering questions.
+            </p>
+            <button class="btn btn-primary" id="resumeBtn"
+                    type="button" onclick="resumeExam()">
+                Resume exam
+            </button>
+            <div class="message" id="pauseMessage"></div>
+        </div>
+    </div>
 
     <script>
+        "use strict";
 
-        /* =====================================================
-           CAMERA / FACE MONITORING
-        ===================================================== */
+        // Replace these sample questions with your actual exam questions.
+        const questions = [
+            {
+                question: "Which data structure follows the FIFO principle?",
+                options: ["Stack", "Queue", "Tree", "Graph"]
+            },
+            {
+                question: "Which language is primarily used by this ExamGuard backend?",
+                options: ["Java", "C++", "Python", "Ruby"]
+            },
+            {
+                question: "Which HTTP method is commonly used to submit new data?",
+                options: ["GET", "POST", "TRACE", "HEAD"]
+            },
+            {
+                question: "What does HTML stand for?",
+                options: [
+                    "HyperText Markup Language",
+                    "HighText Machine Language",
+                    "Hyper Transfer Main Link",
+                    "Home Tool Markup Language"
+                ]
+            },
+            {
+                question: "Which data structure uses LIFO?",
+                options: ["Queue", "Stack", "Linked list only", "Queue and tree"]
+            },
+            {
+                question: "Which SQL command retrieves records from a table?",
+                options: ["UPDATE", "DELETE", "SELECT", "INSERT"]
+            },
+            {
+                question: "Which of these is a Python web framework?",
+                options: ["Flask", "NumPy", "OpenCV", "Matplotlib"]
+            },
+            {
+                question: "What is the main purpose of a database?",
+                options: [
+                    "To store and organize data",
+                    "To draw images only",
+                    "To replace the operating system",
+                    "To compile every programming language"
+                ]
+            },
+            {
+                question: "Which structure stores data as key-value pairs in Python?",
+                options: ["Tuple", "Dictionary", "Set", "String"]
+            },
+            {
+                question: "What does API commonly stand for?",
+                options: [
+                    "Application Programming Interface",
+                    "Applied Program Internet",
+                    "Automated Process Instruction",
+                    "Application Private Input"
+                ]
+            }
+        ];
 
-        const video =
-            document.getElementById("camera");
+        const EXAM_DURATION_SECONDS = 30 * 60;
 
-        const canvas =
-            document.getElementById("canvas");
+        let currentQuestion = 0;
+        let answers = {};
+        let examPaused = false;
+        let examSubmitted = false;
+        let examSubmitting = false;
+        let remainingSeconds = EXAM_DURATION_SECONDS;
 
-        const context =
-            canvas.getContext("2d");
+        let cameraStream = null;
+        let screenStream = null;
+        let cameraInterval = null;
+        let timerInterval = null;
+        let mouseActivityInterval = null;
+        let lastMouseEventTime = 0;
+        let lastFaceState = "";
+        let cameraRequestInProgress = false;
+        let screenshotInProgress = false;
 
+        const cameraVideo = document.getElementById("camera");
+        const canvas = document.getElementById("canvas");
+        const screenVideo = document.getElementById("screenVideo");
 
-        const cameraStatus =
-            document.getElementById("camera-status");
+        function setStatus(id, text, kind = "") {
+            const element = document.getElementById(id);
+            element.textContent = text;
+            element.className = "status-pill";
 
-        const cameraDot =
-            document.getElementById("camera-dot");
+            if (kind) {
+                element.classList.add(kind);
+            }
+        }
 
+        function showMessage(message, kind = "") {
+            const element = document.getElementById("actionMessage");
+            element.textContent = message;
+            element.className = "message";
 
-        const faceStatus =
-            document.getElementById("face-status");
+            if (kind) {
+                element.classList.add(kind);
+            }
+        }
 
-        const faceDot =
-            document.getElementById("face-dot");
+        function addEventToLog(message) {
+            const log = document.getElementById("eventLog");
+            const item = document.createElement("div");
 
-        let screenStream = null 
+            item.className = "event-item";
+            item.textContent =
+                new Date().toLocaleTimeString() + " — " + message;
 
-        //start camera and ask permission for screenshot 
-        async function startScreenCapture() {
+            log.prepend(item);
 
-    try {
+            while (log.children.length > 15) {
+                log.removeChild(log.lastChild);
+            }
+        }
 
-        screenStream =
-            await navigator.mediaDevices.getDisplayMedia({
-                video: true
+        function ensureExamActive() {
+            return !examPaused && !examSubmitted && !examSubmitting;
+        }
+
+        async function postExamAction(endpoint) {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
             });
 
-        const video =
-            document.getElementById("screenVideo");
+            let data;
 
-        video.srcObject = screenStream;
-
-        console.log(
-            "Screen capture started."
-        );
-
-        // Detect when candidate stops sharing
-        const videoTrack =
-            screenStream.getVideoTracks()[0];
-
-        videoTrack.addEventListener(
-            "ended",
-            function () {
-
-                console.log(
-                    "Screen sharing stopped."
-                );
-
-                screenStream = null;
+            try {
+                data = await response.json();
+            } catch {
+                throw new Error("The server returned an invalid response.");
             }
-        );
 
-    } catch (error) {
+            if (!response.ok || data.success === false) {
+                throw new Error(data.message || `Request failed (${response.status}).`);
+            }
 
-        console.error(
-            "Screen capture permission denied:",
-            error
-        );
+            return data;
+        }
 
-        screenStream = null;
-    }
-}
+        // Render the current question.
+        function renderQuestion() {
+            const question = questions[currentQuestion];
 
-function captureScreenshot() {
+            document.getElementById("questionCount").textContent =
+                `QUESTION ${currentQuestion + 1} OF ${questions.length}`;
 
-    const video =
-        document.getElementById(
-            "screenVideo"
-        );
+            document.getElementById("questionText").textContent =
+                question.question;
 
-    if (!video) {
+            document.getElementById("optionsContainer").replaceChildren();
 
-        console.error(
-            "Screen video element not found."
-        );
+            question.options.forEach((option, index) => {
+                const label = document.createElement("label");
+                label.className = "option";
 
-        return null;
-    }
+                const input = document.createElement("input");
+                input.type = "radio";
+                input.name = "question-" + currentQuestion;
+                input.value = String(index);
+                input.checked = answers[currentQuestion] === index;
+                input.disabled = !ensureExamActive();
 
-    if (
-        video.readyState < 2 ||
-        video.videoWidth === 0 ||
-        video.videoHeight === 0
-    ) {
+                const text = document.createElement("span");
+                text.textContent = option;
 
-        console.error(
-            "Screen video is not ready."
-        );
-
-        return null;
-    }
-
-    const canvas =
-        document.createElement(
-            "canvas"
-        );
-
-    canvas.width =
-        video.videoWidth;
-
-    canvas.height =
-        video.videoHeight;
-
-    const context =
-        canvas.getContext("2d");
-
-    context.drawImage(
-        video,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    return canvas.toDataURL(
-        "image/jpeg",
-        0.8
-    );
-}
-
-async function sendScreenshot() {
-
-    const screenshot =
-        captureScreenshot();
-
-    if (!screenshot) {
-
-        console.error(
-            "Screenshot could not be captured."
-        );
-
-        return;
-    }
-
-    try {
-
-        const response =
-            await fetch(
-                "/upload-evidence",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        evidence_type:
-                            "screenshot",
-
-                        image:
-                            screenshot
-                    })
+                if (input.checked) {
+                    label.classList.add("selected");
                 }
+
+                input.addEventListener("change", () => {
+                    if (!ensureExamActive()) return;
+
+                    answers[currentQuestion] = index;
+
+                    renderQuestion();
+                    renderNavigator();
+
+                    logBrowserEvent(
+                        "answer_selected",
+                        `Question ${currentQuestion + 1}: option ${index + 1} selected`
+                    );
+                });
+
+                label.append(input, text);
+                document.getElementById("optionsContainer").appendChild(label);
+            });
+
+            const answered = Object.prototype.hasOwnProperty.call(
+                answers, currentQuestion
             );
 
-        const result =
-            await response.json();
+            document.getElementById("answerState").textContent =
+                answered ? "Answered" : "Not answered";
 
-        console.log(
-            "Screenshot upload result:",
-            result
-        );
+            document.getElementById("previousBtn").disabled =
+                currentQuestion === 0 || !ensureExamActive();
 
-        if (result.success) {
+            document.getElementById("nextBtn").disabled =
+                currentQuestion === questions.length - 1 || !ensureExamActive();
 
-            console.log(
-                "Screenshot evidence saved."
-            );
+            document.getElementById("clearBtn").disabled =
+                !answered || !ensureExamActive();
 
-            console.log(
-                "SHA-256:",
-                result.sha256_hash
-            );
+            document.getElementById("pauseBtn").disabled =
+                examSubmitted || examSubmitting || examPaused;
 
-        } else {
+            document.getElementById("submitBtn").disabled =
+                examSubmitted || examSubmitting;
 
-            console.error(
-                "Evidence upload failed:",
-                result.message
+            renderNavigator();
+        }
+
+        function renderNavigator() {
+            const grid = document.getElementById("questionGrid");
+            grid.replaceChildren();
+
+            questions.forEach((question, index) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "question-number";
+                button.textContent = String(index + 1);
+                button.disabled = !ensureExamActive();
+
+                if (Object.prototype.hasOwnProperty.call(answers, index)) {
+                    button.classList.add("answered");
+                }
+
+                if (index === currentQuestion) {
+                    button.classList.add("current");
+                }
+
+                button.addEventListener("click", () => {
+                    if (!ensureExamActive()) return;
+
+                    currentQuestion = index;
+                    renderQuestion();
+                });
+
+                grid.appendChild(button);
+            });
+
+            const answeredCount = Object.keys(answers).length;
+            const percentage = (answeredCount / questions.length) * 100;
+
+            document.getElementById("progressText").textContent =
+                `${answeredCount} of ${questions.length} answered`;
+
+            document.getElementById("progressFill").style.width =
+                percentage + "%";
+        }
+
+        function nextQuestion() {
+            if (!ensureExamActive()) return;
+
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (!ensureExamActive()) return;
+
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function clearAnswer() {
+            if (!ensureExamActive()) return;
+
+            delete answers[currentQuestion];
+            renderQuestion();
+            showMessage("Answer cleared.", "success");
+
+            logBrowserEvent(
+                "answer_cleared",
+                `Answer cleared for question ${currentQuestion + 1}`
             );
         }
 
-    } catch (error) {
+        // Record a browser event using the existing Flask route.
+        async function logBrowserEvent(eventType, details) {
+            addEventToLog(`${eventType}: ${details}`);
 
-        console.error(
-            "Screenshot upload error:",
-            error
-        );
-    }
-}
+            try {
+                const response = await fetch("/log-browser-event", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        event_type: eventType,
+                        details: details
+                    })
+                });
 
+                let data = {};
 
-        navigator.mediaDevices
-            .getUserMedia({
-                video: true,
-                audio: false
-            })
+                try {
+                    data = await response.json();
+                } catch {
+                    // Handle a non-JSON response below.
+                }
 
-            .then(function (stream) {
+                if (!response.ok || data.success === false) {
+                    console.error(
+                        "Event logging failed:",
+                        data.message || response.status
+                    );
+                    return;
+                }
 
-                video.srcObject = stream;
+                if (data.screenshot_required) {
+                    await sendScreenshot();
+                }
+            } catch (error) {
+                console.error("Browser event error:", error);
+            }
+        }
 
-                cameraStatus.innerText =
-                    "Connected";
+        // Webcam setup and face-presence polling.
+        async function startCamera() {
+            if (!navigator.mediaDevices?.getUserMedia) {
+                setStatus("cameraStatus", "Camera: Unsupported", "bad");
+                document.getElementById("cameraMessage").textContent =
+                    "This browser does not support camera access.";
+                return;
+            }
 
-                cameraDot.className =
-                    "status-dot dot-good";
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
 
-                setInterval(
-                    captureAndSendFrame,
-                    2000
+                cameraVideo.srcObject = cameraStream;
+                await cameraVideo.play();
+
+                setStatus("cameraStatus", "Camera: Connected", "good");
+                document.getElementById("cameraMessage").textContent =
+                    "Camera is active for face-presence monitoring.";
+
+                startCameraMonitoring();
+            } catch (error) {
+                setStatus("cameraStatus", "Camera: Unavailable", "bad");
+                document.getElementById("cameraMessage").textContent =
+                    "Camera access failed. Check browser permissions and retry.";
+
+                logBrowserEvent(
+                    "camera_unavailable",
+                    error.message || "Camera access failed"
+                );
+            }
+        }
+
+        function startCameraMonitoring() {
+            if (cameraInterval) {
+                clearInterval(cameraInterval);
+            }
+
+            cameraInterval = setInterval(sendCameraFrame, 2000);
+        }
+
+        async function sendCameraFrame() {
+            if (
+                !ensureExamActive() ||
+                !cameraStream ||
+                cameraVideo.readyState < 2 ||
+                cameraRequestInProgress
+            ) {
+                return;
+            }
+
+            cameraRequestInProgress = true;
+
+            try {
+                const context = canvas.getContext("2d");
+
+                canvas.width = cameraVideo.videoWidth;
+                canvas.height = cameraVideo.videoHeight;
+
+                if (!canvas.width || !canvas.height) return;
+
+                context.drawImage(
+                    cameraVideo, 0, 0, canvas.width, canvas.height
                 );
 
-            })
-
-            .catch(function (error) {
-
-                console.error(
-                    "Camera error:",
-                    error
-                );
-
-                cameraStatus.innerText =
-                    "Access denied";
-
-                cameraDot.className =
-                    "status-dot dot-bad";
-
-            });
-
-
-        function captureAndSendFrame() {
-
-            canvas.width =
-                video.videoWidth;
-
-            canvas.height =
-                video.videoHeight;
-
-
-            context.drawImage(
-                video,
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-
-
-            canvas.toBlob(function (blob) {
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, "image/jpeg", 0.75);
+                });
 
                 if (!blob) return;
 
+                const formData = new FormData();
+                formData.append("frame", blob, "frame.jpg");
 
-                const formData =
-                    new FormData();
-
-
-                formData.append(
-                    "frame",
-                    blob,
-                    "frame.jpg"
-                );
-
-
-                fetch(
-                    "/monitor-face",
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                )
-
-                .then(response =>
-                    response.json()
-                )
-
-                .then(data => {
-
-                    if (
-                        data.state ===
-                        "face_detected"
-                    ) {
-
-                        faceStatus.innerText =
-                            "Detected";
-
-                        faceDot.className =
-                            "status-dot dot-good";
-
-                    }
-
-                    else if (
-                        data.state ===
-                        "face_absent"
-                    ) {
-
-                        faceStatus.innerText =
-                            "Not visible";
-
-                        faceDot.className =
-                            "status-dot dot-bad";
-
-                    }
-
-                })
-
-                .catch(error =>
-                    console.error(
-                        "Face monitoring error:",
-                        error
-                    )
-                );
-
-
-            }, "image/jpeg", 0.7);
-
-        }
-
-
-        /* =====================================================
-           BROWSER EVENT LOGGING
-        ===================================================== */
-
-        function logBrowserEvent(
-            eventType,
-            details
-        ) {
-
-            fetch(
-                "/log-browser-event",
-                {
+                const response = await fetch("/monitor-face", {
                     method: "POST",
+                    body: formData
+                });
 
+                if (!response.ok) {
+                    throw new Error(`Face monitoring failed (${response.status})`);
+                }
+
+                const data = await response.json();
+
+                if (data.state === "face_detected") {
+                    setStatus("faceStatus", "Face: Detected", "good");
+
+                    if (lastFaceState === "face_absent") {
+                        addEventToLog("Face detected again.");
+                    }
+                } else if (data.state === "face_absent") {
+                    setStatus("faceStatus", "Face: Not detected", "warning");
+
+                    if (lastFaceState !== "face_absent") {
+                        addEventToLog("Face not detected.");
+                    }
+                }
+
+                lastFaceState = data.state || "";
+            } catch (error) {
+                console.error("Camera monitoring error:", error);
+            } finally {
+                cameraRequestInProgress = false;
+            }
+        }
+
+        // Screen sharing must start from a user action in the browser.
+        async function startScreenCapture() {
+            if (!ensureExamActive()) return;
+
+            if (!navigator.mediaDevices?.getDisplayMedia) {
+                setStatus("screenStatus", "Screen: Unsupported", "bad");
+                document.getElementById("screenMessage").textContent =
+                    "Screen sharing is not supported in this browser.";
+                return;
+            }
+
+            try {
+                if (screenStream) {
+                    screenStream.getTracks().forEach(track => track.stop());
+                }
+
+                screenStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: false
+                });
+
+                screenVideo.srcObject = screenStream;
+                await screenVideo.play();
+
+                setStatus("screenStatus", "Screen: Shared", "good");
+                document.getElementById("screenMessage").textContent =
+                    "Screen sharing is active.";
+
+                document.getElementById("shareScreenBtn").textContent =
+                    "Screen shared";
+
+                logBrowserEvent("screen_share_started", "Screen sharing started");
+
+                const videoTrack = screenStream.getVideoTracks()[0];
+
+                if (videoTrack) {
+                    videoTrack.addEventListener("ended", () => {
+                        setStatus("screenStatus", "Screen: Stopped", "warning");
+
+                        document.getElementById("screenMessage").textContent =
+                            "Screen sharing stopped. Click Share screen to start again.";
+
+                        document.getElementById("shareScreenBtn").textContent =
+                            "Share screen";
+
+                        if (!examSubmitted) {
+                            logBrowserEvent(
+                                "screen_share_stopped",
+                                "Screen sharing track ended"
+                            );
+                        }
+                    });
+                }
+            } catch (error) {
+                setStatus("screenStatus", "Screen: Not shared", "warning");
+
+                document.getElementById("screenMessage").textContent =
+                    error.name === "NotAllowedError"
+                        ? "Screen sharing was cancelled or permission was denied."
+                        : "Unable to start screen sharing. Please try again.";
+
+                console.error("Screen sharing error:", error);
+            }
+        }
+
+        // Upload a screenshot when the backend says evidence is required.
+        async function sendScreenshot() {
+            if (
+                screenshotInProgress ||
+                !screenStream ||
+                screenVideo.readyState < 2 ||
+                screenVideo.videoWidth === 0
+            ) {
+                console.warn("Screenshot unavailable: screen sharing is not ready.");
+                return;
+            }
+
+            screenshotInProgress = true;
+
+            try {
+                const screenshotCanvas = document.createElement("canvas");
+
+                screenshotCanvas.width = screenVideo.videoWidth;
+                screenshotCanvas.height = screenVideo.videoHeight;
+
+                const context = screenshotCanvas.getContext("2d");
+                context.drawImage(
+                    screenVideo,
+                    0,
+                    0,
+                    screenshotCanvas.width,
+                    screenshotCanvas.height
+                );
+
+                const image = screenshotCanvas.toDataURL("image/jpeg", 0.75);
+
+                const response = await fetch("/upload-evidence", {
+                    method: "POST",
                     headers: {
-                        "Content-Type":
-                            "application/json"
+                        "Content-Type": "application/json"
                     },
+                    body: JSON.stringify({ image: image })
+                });
 
+                const data = await response.json();
+
+                if (!response.ok || data.success === false) {
+                    throw new Error(data.message || "Evidence upload failed.");
+                }
+
+                addEventToLog("Evidence screenshot uploaded.");
+            } catch (error) {
+                console.error("Screenshot upload error:", error);
+                addEventToLog("Evidence screenshot upload failed.");
+            } finally {
+                screenshotInProgress = false;
+            }
+        }
+
+        // Pause and resume.
+        async function pauseExam() {
+            if (!ensureExamActive()) return;
+
+            const button = document.getElementById("pauseBtn");
+            button.disabled = true;
+
+            try {
+                await postExamAction("/pause-exam");
+
+                examPaused = true;
+
+                stopCameraPolling();
+
+                setStatus("examStatus", "Exam: Paused", "warning");
+                document.getElementById("pausedOverlay").classList.remove("hidden");
+                document.getElementById("pauseMessage").textContent = "";
+
+                logBrowserEvent("exam_paused", "Candidate paused the exam");
+
+                renderQuestion();
+            } catch (error) {
+                showMessage("Could not pause the exam: " + error.message, "error");
+                button.disabled = false;
+            }
+        }
+
+        async function resumeExam() {
+            if (!examPaused || examSubmitted || examSubmitting) return;
+
+            const button = document.getElementById("resumeBtn");
+            button.disabled = true;
+
+            try {
+                await postExamAction("/resume-exam");
+
+                examPaused = false;
+
+                document.getElementById("pausedOverlay").classList.add("hidden");
+
+                setStatus("examStatus", "Exam: Active", "good");
+
+                if (cameraStream) {
+                    startCameraMonitoring();
+                }
+
+                logBrowserEvent("exam_resumed", "Candidate resumed the exam");
+
+                renderQuestion();
+            } catch (error) {
+                document.getElementById("pauseMessage").textContent =
+                    "Could not resume: " + error.message;
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        function stopCameraPolling() {
+            if (cameraInterval) {
+                clearInterval(cameraInterval);
+                cameraInterval = null;
+            }
+        }
+
+        function stopAllTimers() {
+            stopCameraPolling();
+
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+
+            if (mouseActivityInterval) {
+                clearInterval(mouseActivityInterval);
+                mouseActivityInterval = null;
+            }
+        }
+
+        function releaseMedia() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+
+            if (screenStream) {
+                screenStream.getTracks().forEach(track => track.stop());
+                screenStream = null;
+            }
+
+            cameraVideo.srcObject = null;
+            screenVideo.srcObject = null;
+        }
+
+        // Countdown timer.
+        function updateTimer() {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+
+            document.getElementById("timer").textContent =
+                String(minutes).padStart(2, "0") + ":" +
+                String(seconds).padStart(2, "0");
+
+            if (remainingSeconds <= 60) {
+                document.getElementById("timer").style.color = "var(--red)";
+            }
+
+            if (remainingSeconds <= 0) {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+
+                if (!examSubmitted && !examSubmitting) {
+                    submitExam(true);
+                }
+
+                return;
+            }
+
+            if (!examPaused && !examSubmitted && !examSubmitting) {
+                remainingSeconds--;
+            }
+        }
+
+        // Submit to the existing Flask endpoint.
+        async function submitExam(autoSubmit = false) {
+            if (examSubmitted || examSubmitting) return;
+
+            const unanswered = questions.length - Object.keys(answers).length;
+
+            if (!autoSubmit) {
+                const confirmation = unanswered > 0
+                    ? `You have ${unanswered} unanswered question(s). Submit anyway?`
+                    : "Are you sure you want to submit your exam?";
+
+                if (!window.confirm(confirmation)) return;
+            }
+
+            examSubmitting = true;
+
+            document.getElementById("submitBtn").disabled = true;
+            document.getElementById("pauseBtn").disabled = true;
+
+            showMessage("Submitting exam...", "");
+
+            try {
+                // This endpoint currently submits the session.
+                // Answers are not persisted unless your backend accepts and saves them.
+                const response = await fetch("/submit-exam", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({
-                        event_type:
-                            eventType,
-
-                        details:
-                            details
+                        answers: answers
                     })
+                });
+
+                let data;
+
+                try {
+                    data = await response.json();
+                } catch {
+                    throw new Error("The server returned an invalid response.");
                 }
-            )
 
-            .then(response =>
-                response.json()
-            )
+                if (!response.ok || data.success === false) {
+                    throw new Error(data.message || "Exam submission failed.");
+                }
 
-            .catch(error =>
-                console.error(
-                    "Browser event error:",
-                    error
-                )
-            );
+                examSubmitted = true;
+                examSubmitting = false;
 
+                stopAllTimers();
+                releaseMedia();
 
-            displayEvent(
-                eventType,
-                details
-            );
+                setStatus("examStatus", "Exam: Submitted", "good");
+                showMessage("Exam submitted successfully. Redirecting...", "success");
 
+                // Use the server-provided destination if it exists.
+                window.location.href = data.redirect || "/dashboard";
+            } catch (error) {
+                examSubmitting = false;
+
+                document.getElementById("submitBtn").disabled = false;
+                document.getElementById("pauseBtn").disabled = false;
+
+                showMessage(
+                    "Submission failed: " + error.message +
+                    ". Please try again.",
+                    "error"
+                );
+
+                console.error("Exam submission error:", error);
+            }
         }
 
+        // Browser activity monitoring.
+        document.addEventListener("visibilitychange", () => {
+            if (examSubmitted || examSubmitting) return;
 
-        function displayEvent(
-            eventType,
-            details
-        ) {
-
-            const eventLog =
-                document.getElementById(
-                    "event-log"
-                );
-
-
-            const time =
-                new Date()
-                    .toLocaleTimeString();
-
-
-            const flagTypes = [
-
-                "tab_switch",
-                "focus_lost",
-                "right_click",
-                "copy_attempt",
-                "paste_attempt",
-                "cut_attempt"
-
-            ];
-
-
-            const line =
-                document.createElement(
-                    "div"
-                );
-
-
-            line.className =
-                "console-line" +
-                (
-                    flagTypes.includes(
-                        eventType
-                    )
-                        ? " flag"
-                        : ""
-                );
-
-
-            line.innerHTML =
-                `<span class="t">${time}</span>
-                 ${eventType} — ${details}`;
-
-
-            eventLog.appendChild(line);
-
-
-            eventLog.scrollTop =
-                eventLog.scrollHeight;
-
-        }
-
-
-        /* =====================================================
-           EXAM START
-        ===================================================== */
-
-        window.addEventListener(
-            "load",
-            function () {
-
+            if (document.hidden) {
                 logBrowserEvent(
-                    "exam_started",
-                    "Candidate opened examination page"
+                    "tab_switch",
+                    "Exam tab became hidden"
                 );
-
-                startScreenCapture()
-
-            }
-        );
-
-
-        /* =====================================================
-           TAB SWITCH
-        ===================================================== */
-
-        document.addEventListener(
-            "visibilitychange",
-            function () {
-
-                if (document.hidden) {
-
-                    logBrowserEvent(
-                        "tab_switch",
-                        "Candidate left examination page"
-                    );
-
-                }
-
-                else {
-
-                    logBrowserEvent(
-                        "tab_return",
-                        "Candidate returned to examination page"
-                    );
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           WINDOW FOCUS
-        ===================================================== */
-
-        window.addEventListener(
-            "blur",
-            function () {
-
+            } else {
                 logBrowserEvent(
-                    "focus_lost",
-                    "Browser window lost focus"
+                    "tab_return",
+                    "Candidate returned to the exam tab"
                 );
-
             }
-        );
+        });
 
-
-        window.addEventListener(
-            "focus",
-            function () {
-
-                logBrowserEvent(
-                    "focus_gained",
-                    "Browser window regained focus"
-                );
-
+        window.addEventListener("blur", () => {
+            if (!examSubmitted && !examSubmitting) {
+                logBrowserEvent("focus_lost", "Exam window lost focus");
             }
-        );
+        });
 
-
-        /* =====================================================
-           COPY / PASTE / CUT
-        ===================================================== */
-
-        document.addEventListener(
-            "copy",
-            function () {
-
-                logBrowserEvent(
-                    "copy_attempt",
-                    "Candidate attempted to copy content"
-                );
-
+        window.addEventListener("focus", () => {
+            if (!examSubmitted && !examSubmitting) {
+                logBrowserEvent("focus_gained", "Exam window regained focus");
             }
-        );
+        });
 
+        document.addEventListener("copy", event => {
+            if (!ensureExamActive()) return;
 
-        document.addEventListener(
-            "paste",
-            function () {
+            event.preventDefault();
+            logBrowserEvent("copy_attempt", "Copy action attempted");
+        });
 
-                logBrowserEvent(
-                    "paste_attempt",
-                    "Candidate attempted to paste content"
-                );
+        document.addEventListener("cut", event => {
+            if (!ensureExamActive()) return;
 
-            }
-        );
+            event.preventDefault();
+            logBrowserEvent("cut_attempt", "Cut action attempted");
+        });
 
+        document.addEventListener("paste", event => {
+            if (!ensureExamActive()) return;
 
-        document.addEventListener(
-            "cut",
-            function () {
+            event.preventDefault();
+            logBrowserEvent("paste_attempt", "Paste action attempted");
+        });
 
-                logBrowserEvent(
-                    "cut_attempt",
-                    "Candidate attempted to cut content"
-                );
+        document.addEventListener("contextmenu", event => {
+            if (!ensureExamActive()) return;
 
-            }
-        );
+            event.preventDefault();
+            logBrowserEvent("right_click", "Right-click attempted");
+        });
 
+        document.addEventListener("keydown", event => {
+            if (!ensureExamActive()) return;
 
-        /* =====================================================
-           RIGHT CLICK
-        ===================================================== */
+            const key = event.key.toLowerCase();
 
-        document.addEventListener(
-            "contextmenu",
-            function (event) {
-
+            if (
+                (event.ctrlKey || event.metaKey) &&
+                ["c", "v", "x", "u", "p", "s"].includes(key)
+            ) {
                 event.preventDefault();
 
                 logBrowserEvent(
-                    "right_click",
-                    "Candidate attempted right click"
+                    "restricted_shortcut",
+                    "Restricted keyboard shortcut attempted"
                 );
-
-            }
-        );
-
-
-        /* =====================================================
-           KEYBOARD ACTIVITY
-        ===================================================== */
-
-        document.addEventListener(
-            "keydown",
-            function () {
+            } else if (key === "f12") {
+                event.preventDefault();
 
                 logBrowserEvent(
-                    "keyboard_activity",
-                    "Candidate pressed a keyboard key"
+                    "restricted_shortcut",
+                    "Developer tools shortcut attempted"
                 );
-
             }
-        );
+        });
 
+        document.addEventListener("mousemove", () => {
+            if (!ensureExamActive()) return;
 
-        /* =====================================================
-           MOUSE ACTIVITY
-        ===================================================== */
+            const now = Date.now();
 
-        let lastMouseEventTime = 0;
+            if (now - lastMouseEventTime >= 5000) {
+                lastMouseEventTime = now;
 
-
-        document.addEventListener(
-            "mousemove",
-            function () {
-
-                const now =
-                    Date.now();
-
-
-                if (
-                    now -
-                    lastMouseEventTime >=
-                    5000
-                ) {
-
-                    lastMouseEventTime =
-                        now;
-
-
-                    logBrowserEvent(
-                        "mouse_activity",
-                        "Candidate moved mouse"
-                    );
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           ANSWER SELECTION
-        ===================================================== */
-
-        document
-            .querySelectorAll(
-                'input[type="radio"]'
-            )
-            .forEach(function (option) {
-
-                option.addEventListener(
-                    "change",
-                    function () {
-
-                        logBrowserEvent(
-                            "answer_selected",
-                            "Candidate selected an answer"
-                        );
-
-                    }
+                logBrowserEvent(
+                    "mouse_activity",
+                    "Mouse movement detected"
                 );
-
-            });
-
-
-        /* =====================================================
-           SAVE ANSWER
-        ===================================================== */
-
-        function submitAnswer(
-            questionNumber
-        ) {
-
-            const selected =
-                document.querySelector(
-                    `input[name="answer_${questionNumber}"]:checked`
-                );
-
-
-            if (!selected) {
-
-                alert(
-                    "Please select an option before saving."
-                );
-
-                return;
-
             }
+        });
 
+        // Initialization.
+        document.addEventListener("DOMContentLoaded", async () => {
+            renderQuestion();
+            updateTimer();
 
-            logBrowserEvent(
-                "answer_saved",
-                `Candidate saved answer for Question ${questionNumber}`
-            );
+            timerInterval = setInterval(updateTimer, 1000);
 
+            setStatus("examStatus", "Exam: Active", "good");
 
-            alert(
-                `Question ${questionNumber} answer saved successfully.`
-            );
+            await startCamera();
+        });
 
-        }
-
-
-        /* =====================================================
-           SESSION LIFECYCLE
-        ===================================================== */
-
-        const pauseBtn =
-            document.getElementById(
-                "pauseBtn"
-            );
-
-
-        const resumeBtn =
-            document.getElementById(
-                "resumeBtn"
-            );
-
-
-        const submitBtn =
-            document.getElementById(
-                "submitBtn"
-            );
-
-
-        const sessionBadge =
-            document.getElementById(
-                "session-badge"
-            );
-
-
-        /* =====================================================
-           PAUSE EXAM
-        ===================================================== */
-
-        pauseBtn.addEventListener(
-            "click",
-            function () {
-
-                fetch(
-                    "/pause-exam",
-                    {
-                        method: "POST"
-                    }
-                )
-
-                .then(r =>
-                    r.json()
-                )
-
-                .then(() => {
-
-                    sessionBadge.textContent =
-                        "paused";
-
-
-                    sessionBadge.className =
-                        "badge badge-paused";
-
-
-                    pauseBtn.style.display =
-                        "none";
-
-
-                    resumeBtn.style.display =
-                        "inline-block";
-
-
-                    logBrowserEvent(
-                        "exam_paused",
-                        "Candidate paused the exam"
-                    );
-
-                });
-
-            }
-        );
-
-
-        /* =====================================================
-           RESUME EXAM
-        ===================================================== */
-
-        resumeBtn.addEventListener(
-            "click",
-            function () {
-
-                fetch(
-                    "/resume-exam",
-                    {
-                        method: "POST"
-                    }
-                )
-
-                .then(r =>
-                    r.json()
-                )
-
-                .then(() => {
-
-                    sessionBadge.textContent =
-                        "in progress";
-
-
-                    sessionBadge.className =
-                        "badge badge-progress";
-
-
-                    resumeBtn.style.display =
-                        "none";
-
-
-                    pauseBtn.style.display =
-                        "inline-block";
-
-
-                    logBrowserEvent(
-                        "exam_resumed",
-                        "Candidate resumed the exam"
-                    );
-
-                });
-
-            }
-        );
-
-
-        /* =====================================================
-           SUBMIT EXAM
-        ===================================================== */
-
-        submitBtn.addEventListener(
-            "click",
-            function () {
-
-                if (
-                    !confirm(
-                        "Submit your exam now? You won't be able to make further changes."
-                    )
-                ) {
-
-                    return;
-
-                }
-
-
-                fetch(
-                    "/submit-exam",
-                    {
-                        method: "POST"
-                    }
-                )
-
-                .then(r =>
-                    r.json()
-                )
-
-                .then(data => {
-
-                    sessionBadge.textContent =
-                        "submitted";
-
-
-                    sessionBadge.className =
-                        "badge badge-submitted";
-
-
-                    alert(
-                        "Exam submitted successfully."
-                    );
-
-
-                    window.location.href =
-                        data.redirect ||
-                        "/dashboard";
-
-                });
-
-            }
-        );
-
+        // Do not claim that browser-side monitoring prevents every form of cheating.
+        // Browsers also cannot reliably detect all external devices or other screens.
     </script>
-
 </body>
 </html>

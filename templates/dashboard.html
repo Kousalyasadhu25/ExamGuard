@@ -1,11 +1,31 @@
 
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>ExamGuard Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101a2d">
+    <title>Dashboard | ExamGuard</title>
 
     <style>
+        :root {
+            --navy: #101a2d;
+            --navy-light: #1a2942;
+            --blue: #4169e1;
+            --blue-light: #edf2ff;
+            --bg: #f4f6fb;
+            --white: #ffffff;
+            --text: #172033;
+            --muted: #718096;
+            --border: #e5e9f2;
+            --green: #16835d;
+            --green-bg: #e8f7ef;
+            --amber: #a16207;
+            --amber-bg: #fff6df;
+            --red: #b42318;
+            --red-bg: #feeceb;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,102 +34,736 @@
 
         body {
             min-height: 100vh;
-            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: #f4f7f5;
-            color: #17201c;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, -apple-system, BlinkMacSystemFont,
+                         "Segoe UI", sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 3px solid #93b4ff;
+            outline-offset: 3px;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: 245px;
+            padding: 27px 18px;
+            background: var(--navy);
+            color: #c5cee0;
             display: flex;
             flex-direction: column;
+            z-index: 10;
         }
 
-        /* ================= NAVBAR ================= */
-
-        body::before {
-            content: "EXAMGUARD";
+        .brand {
             display: flex;
             align-items: center;
-            height: 72px;
-            padding: 0 7%;
-            background: #ffffff;
-            border-bottom: 1px solid #e5ebe7;
-            color: #14532d;
-            font-size: 20px;
+            gap: 12px;
+            padding: 0 8px;
+            margin-bottom: 47px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: #294477;
+            color: white;
+            font-size: 23px;
+        }
+
+        .brand-name {
+            color: white;
+            font-size: 19px;
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: -.5px;
         }
 
-        /* ================= MAIN ================= */
-
-        h1 {
-            width: min(900px, 90%);
-            margin: 65px auto 15px;
-            font-size: 38px;
-            line-height: 1.2;
-            letter-spacing: -1.2px;
-            color: #17201c;
+        .brand-name span {
+            color: #8eafff;
         }
 
-        p {
-            width: min(900px, 90%);
-            margin: 0 auto;
-            color: #64748b;
-            font-size: 16px;
+        .nav-label {
+            padding: 0 12px;
+            margin-bottom: 12px;
+            color: #8592aa;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            margin-bottom: 6px;
+            border-radius: 9px;
+            color: #c5cee0;
+            font-weight: 500;
+            transition: background .2s, color .2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #253654;
+            color: white;
+        }
+
+        .nav-link.active {
+            box-shadow: inset 3px 0 #85a5ff;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .help-card {
+            padding: 17px 14px;
+            margin: 15px 0 22px;
+            border: 1px solid #33435d;
+            background: #192740;
+            border-radius: 12px;
+        }
+
+        .help-card strong {
+            display: block;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .help-card p {
+            color: #a8b4ca;
+            font-size: 12px;
             line-height: 1.7;
         }
 
-        /* ================= LOGOUT ================= */
-
-        a {
-            position: absolute;
-            top: 21px;
-            right: 7%;
-            text-decoration: none;
-            color: #475569;
-            background: #f8faf9;
-            border: 1px solid #e2e8e4;
-            padding: 9px 17px;
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 12px 14px;
             border-radius: 9px;
+            color: #c5cee0;
+        }
+
+        .logout-link:hover {
+            background: #2b2535;
+            color: #ffb4b4;
+        }
+
+        /* MAIN LAYOUT */
+
+        .main {
+            min-height: 100vh;
+            margin-left: 245px;
+        }
+
+        .topbar {
+            min-height: 76px;
+            padding: 15px 4%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .topbar-label {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .topbar-title {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: #e7edff;
+            color: #294da6;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .content {
+            width: 100%;
+            max-width: 1450px;
+            margin: auto;
+            padding: 35px 4% 45px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 23px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .breadcrumb span {
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        /* WELCOME */
+
+        .welcome {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .welcome h1 {
+            font-size: clamp(25px, 3vw, 33px);
+            line-height: 1.3;
+            letter-spacing: -.9px;
+            color: var(--navy);
+            overflow-wrap: anywhere;
+        }
+
+        .welcome p {
+            margin-top: 9px;
+            color: var(--muted);
             font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s ease;
         }
 
-        a:hover {
-            background: #f0fdf4;
-            color: #15803d;
-            border-color: #bbf7d0;
-            transform: translateY(-1px);
+        .portal-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            padding: 8px 12px;
+            border-radius: 30px;
+            border: 1px solid #d4e9dd;
+            background: #f0faf4;
+            color: #176c48;
+            font-size: 11px;
+            font-weight: 700;
         }
 
-        /* ================= DASHBOARD CONTENT ================= */
-
-        h1 + p {
-            margin-bottom: 35px;
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #20a36b;
         }
 
-        /* ================= MOBILE ================= */
+        /* HERO */
 
-        @media (max-width: 600px) {
+        .hero {
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(180px, .6fr);
+            align-items: center;
+            gap: 25px;
+            min-height: 285px;
+            padding: 37px 39px;
+            border-radius: 18px;
+            color: white;
+            background: linear-gradient(115deg, #101a2d, #203d70);
+            box-shadow: 0 12px 32px rgba(16, 26, 45, .10);
+        }
 
-            body::before {
-                height: 64px;
-                padding: 0 5%;
-                font-size: 18px;
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,.09);
+            right: 1%;
+            top: -130px;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 6px 11px;
+            border: 1px solid rgba(255,255,255,.18);
+            background: rgba(255,255,255,.08);
+            color: #dbe6ff;
+            border-radius: 7px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.3px;
+        }
+
+        .hero h2 {
+            margin: 17px 0 12px;
+            font-size: clamp(24px, 2.5vw, 32px);
+            line-height: 1.3;
+            letter-spacing: -.7px;
+        }
+
+        .hero p {
+            max-width: 470px;
+            color: #c7d3e9;
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .start-form {
+            margin-top: 24px;
+        }
+
+        .start-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 17px;
+            min-height: 48px;
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 9px;
+            background: #ffffff;
+            color: #172b50;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform .2s, background .2s;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            background: #e9efff;
+        }
+
+        .hero-note {
+            margin-top: 13px;
+            color: #c7d3e9;
+            font-size: 11px;
+        }
+
+        .hero-art {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            place-items: center;
+            min-height: 190px;
+        }
+
+        .shield {
+            display: grid;
+            place-items: center;
+            width: 150px;
+            height: 150px;
+            border-radius: 35px;
+            transform: rotate(-6deg);
+            background: linear-gradient(145deg, #496fc0, #263d72);
+            border: 1px solid rgba(255,255,255,.2);
+            box-shadow: 0 20px 45px rgba(0,0,0,.15);
+            font-size: 65px;
+        }
+
+        .art-caption {
+            position: absolute;
+            right: -5px;
+            bottom: 5px;
+            padding: 11px 14px;
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 10px;
+            background: #23395f;
+            color: #e4ecff;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* SECTION HEADERS */
+
+        .section-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 34px 0 17px;
+        }
+
+        .section-heading h2 {
+            color: var(--navy);
+            font-size: 18px;
+            letter-spacing: -.3px;
+        }
+
+        .section-heading p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* PREPARATION CARDS */
+
+        .prep-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .prep-card {
+            padding: 21px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .prep-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(16,26,45,.05);
+        }
+
+        .prep-icon {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            margin-bottom: 15px;
+            border-radius: 11px;
+            background: var(--blue-light);
+            font-size: 20px;
+        }
+
+        .prep-card h3 {
+            margin-bottom: 7px;
+            font-size: 13px;
+            color: var(--navy);
+        }
+
+        .prep-card p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        /* SESSION HISTORY */
+
+        .history-panel {
+            margin-top: 33px;
+            overflow: hidden;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 21px 23px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .history-header h2 {
+            font-size: 17px;
+            color: var(--navy);
+        }
+
+        .history-header p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .count {
+            padding: 5px 9px;
+            border-radius: 7px;
+            background: #edf2ff;
+            color: #3558b4;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 13px 22px;
+            background: #f9faff;
+            color: #748096;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 16px 22px;
+            border-top: 1px solid #edf0f6;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .session-id {
+            color: var(--navy);
+            font-weight: 700;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: capitalize;
+        }
+
+        .status-submitted {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .status-in_progress,
+        .status-paused {
+            background: var(--amber-bg);
+            color: var(--amber);
+        }
+
+        .status-other {
+            background: #eef1f6;
+            color: #526078;
+        }
+
+        .empty-state {
+            padding: 36px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state h3 {
+            color: var(--navy);
+            font-size: 14px;
+        }
+
+        .empty-state p {
+            max-width: 340px;
+            margin: 7px auto 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            padding: 27px 0 5px;
+            text-align: center;
+            color: #8a95a9;
+            font-size: 11px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1050px) {
+            .sidebar {
+                width: 205px;
             }
 
-            a {
-                top: 17px;
-                right: 5%;
-                padding: 8px 13px;
-                font-size: 13px;
+            .main {
+                margin-left: 205px;
             }
 
-            h1 {
-                margin-top: 45px;
-                font-size: 30px;
+            .hero {
+                padding: 29px;
+                grid-template-columns: minmax(0, 1.4fr) minmax(130px, .6fr);
             }
 
-            p {
+            .shield {
+                width: 120px;
+                height: 120px;
+                font-size: 53px;
+            }
+
+            .prep-grid {
+                gap: 11px;
+            }
+
+            .prep-card {
+                padding: 16px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                padding: 14px 5%;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .brand {
+                margin: 0;
+            }
+
+            .brand-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .brand-name {
+                font-size: 17px;
+            }
+
+            .nav-label,
+            .nav-link:not(.active),
+            .sidebar-bottom,
+            .nav-link.active .nav-icon {
+                display: none;
+            }
+
+            .nav-link.active {
+                padding: 9px 11px;
+                margin: 0;
+                font-size: 11px;
+                box-shadow: none;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .topbar {
+                min-height: 65px;
+                padding: 12px 5%;
+            }
+
+            .content {
+                padding: 26px 5% 35px;
+            }
+
+            .welcome {
+                flex-direction: column;
+                gap: 13px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 27px 23px;
+            }
+
+            .hero-art {
+                display: none;
+            }
+
+            .prep-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .prep-card {
+                display: flex;
+                gap: 14px;
+                align-items: flex-start;
+            }
+
+            .prep-icon {
+                flex-shrink: 0;
+                margin-bottom: 0;
+            }
+
+            .history-header {
+                padding: 17px;
+            }
+
+            th, td {
+                padding: 13px 16px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .user-role {
+                display: none;
+            }
+
+            .avatar {
+                width: 35px;
+                height: 35px;
+            }
+
+            .topbar-title {
                 font-size: 14px;
+            }
+
+            .hero h2 {
+                font-size: 25px;
+            }
+
+            .portal-badge {
+                font-size: 10px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition: none !important;
             }
         }
     </style>
@@ -117,12 +771,217 @@
 
 <body>
 
-    <h1>Candidate Dashboard</h1>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a class="brand" href="{{ url_for('dashboard') }}">
+            <span class="brand-icon" aria-hidden="true">🛡</span>
+            <span class="brand-name">EXAM<span>GUARD</span></span>
+        </a>
 
-    <p>Welcome to ExamGuard!</p>
+        <div class="nav-label">Workspace</div>
 
-    <a href="/logout">Logout</a>
+        <a href="{{ url_for('dashboard') }}"
+           class="nav-link active" aria-current="page">
+            <span class="nav-icon" aria-hidden="true">▦</span>
+            Dashboard
+        </a>
+
+        <div class="sidebar-bottom">
+            <div class="help-card">
+                <strong>Ready for your exam?</strong>
+                <p>Check your camera, choose a quiet space, and read the exam guidelines before you begin.</p>
+            </div>
+
+            <a href="{{ url_for('logout') }}" class="logout-link">
+                <span class="nav-icon" aria-hidden="true">↪</span>
+                Log out
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <header class="topbar">
+            <div>
+                <div class="topbar-label">Candidate workspace</div>
+                <div class="topbar-title">Dashboard</div>
+            </div>
+
+            <div class="user-area">
+                <div class="avatar" aria-hidden="true">
+                    {{ candidate["name"][0]|upper }}
+                </div>
+                <div>
+                    <div class="user-name">{{ candidate["name"] }}</div>
+                    <div class="user-role">Candidate</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+
+            <div class="breadcrumb">
+                Workspace / <span>Dashboard</span>
+            </div>
+
+            <!-- WELCOME -->
+            <section class="welcome">
+                <div>
+                    <h1>Welcome back, {{ candidate["name"] }}!</h1>
+                    <p>Manage your exam sessions and get ready for your next assessment.</p>
+                </div>
+
+                <div class="portal-badge">
+                    <span class="dot"></span>
+                    Candidate portal
+                </div>
+            </section>
+
+            <!-- START EXAM HERO -->
+            <section class="hero">
+                <div class="hero-content">
+                    <div class="hero-tag">YOUR ASSESSMENT SPACE</div>
+
+                    <h2>Ready to begin your exam?</h2>
+
+                    <p>
+                        Settle into a quiet environment, check your camera,
+                        and make sure your face is visible before starting.
+                        Your session activity may be recorded for review.
+                    </p>
+
+                    <form class="start-form"
+                          action="{{ url_for('start_exam') }}"
+                          method="POST">
+
+                        <button type="submit" class="start-btn">
+                            Start Exam <span aria-hidden="true">→</span>
+                        </button>
+                    </form>
+
+                    <div class="hero-note">
+                        🔒 Your exam session is linked to your candidate account.
+                    </div>
+                </div>
+
+                <div class="hero-art" aria-hidden="true">
+                    <div class="shield">🛡️</div>
+                    <div class="art-caption">Secure assessment workspace</div>
+                </div>
+            </section>
+
+            <!-- PREPARATION -->
+            <section>
+                <div class="section-heading">
+                    <div>
+                        <h2>Before you start</h2>
+                        <p>A few quick checks for a smoother exam experience.</p>
+                    </div>
+                </div>
+
+                <div class="prep-grid">
+                    <article class="prep-card">
+                        <div class="prep-icon" aria-hidden="true">📷</div>
+                        <div>
+                            <h3>Check your camera</h3>
+                            <p>Make sure your webcam is connected and browser camera permission is available.</p>
+                        </div>
+                    </article>
+
+                    <article class="prep-card">
+                        <div class="prep-icon" aria-hidden="true">🖥️</div>
+                        <div>
+                            <h3>Prepare your workspace</h3>
+                            <p>Choose a quiet, well-lit place with minimal distractions.</p>
+                        </div>
+                    </article>
+
+                    <article class="prep-card">
+                        <div class="prep-icon" aria-hidden="true">📋</div>
+                        <div>
+                            <h3>Review exam guidelines</h3>
+                            <p>Understand your institution's rules before starting your assessment.</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- RECENT SESSIONS -->
+            <section class="history-panel">
+                <div class="history-header">
+                    <div>
+                        <h2>Recent exam sessions</h2>
+                        <p>Your latest recorded assessment sessions.</p>
+                    </div>
+
+                    <span class="count">{{ recent_sessions|length }} sessions</span>
+                </div>
+
+                {% if recent_sessions %}
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Session ID</th>
+                                    <th>Started at</th>
+                                    <th>Submitted at</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for exam in recent_sessions %}
+                                    <tr>
+                                        <td class="session-id"
+                                            title="{{ exam['session_id'] }}">
+                                            {{ exam['session_id'][:8] }}…
+                                        </td>
+
+                                        <td>
+                                            {{ exam['started_at'] or '—' }}
+                                        </td>
+
+                                        <td>
+                                            {{ exam['submitted_at'] or '—' }}
+                                        </td>
+
+                                        <td>
+                                            {% set status = exam['status']|lower %}
+                                            <span class="status
+                                                {% if status == 'submitted' %}
+                                                    status-submitted
+                                                {% elif status == 'in_progress' %}
+                                                    status-in_progress
+                                                {% elif status == 'paused' %}
+                                                    status-paused
+                                                {% else %}
+                                                    status-other
+                                                {% endif %}">
+                                                {{ status|replace('_', ' ') }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon" aria-hidden="true">📄</div>
+                        <h3>No exam sessions yet</h3>
+                        <p>Your exam history will appear here after you start your first assessment.</p>
+                    </div>
+                {% endif %}
+            </section>
+
+            <footer class="footer">
+                ExamGuard · Secure assessments, fair outcomes.
+            </footer>
+
+        </main>
+    </div>
 
 </body>
-
 </html>
